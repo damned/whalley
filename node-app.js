@@ -16,7 +16,7 @@ var handler = function(request, response) {
     sys.log('request: ' + describe(request)); 
     sys.log('response: ' + describe(response)); 
     response.writeHeader('Content-Type', 'text/html');
-    response.write('<html><head><script src="lib/fabric.js"></script></head><body><div id="message">hello <span class="name">You</span>!</div><canvas id="wall" width="940" height="500"></canvas><script src="lib/whalley-client.js"></script></body></html>');
+    response.write('<html><head><script src="lib/fabric.js"><script src="lib/Modernist_One_400.font.js"></script></head><body><div id="message">hello <span class="name">You</span>!</div><canvas id="wall" width="940" height="500"></canvas><script src="lib/whalley-client.js"></script></body></html>');
     response.end();
   }
   else if (request.url.indexOf('.js') !== -1) {
