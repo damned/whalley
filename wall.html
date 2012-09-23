@@ -4,13 +4,21 @@
     <script src="lib/jquery.cookie.js"></script>
   </head><body>
     <div id="message">
-      hello! username <input type="text" id="username" value="dmoore"/> password <input type="password" id="password"/> <input type="button" value="Load wall" onclick="fetch_cards_with_creds();"/></div>
+      hello! username <input type="text" id="username" value="dmoore"/> 
+      password <input type="password" id="password"/> 
+      <input id="load-wall" type="button" value="Load wall"/>
+      <input id="add-card" type="button" value="Add card"/>
+      <input id="card-text" type="text" value="(new card text)"/>
+    </div>
     <canvas id="wall" width="940" height="500"></canvas>
     <script src="lib/whalley-client.js"></script>
     <script type="text/javascript">
-      var fetch_cards_with_creds = function() {
+      $('#load-wall').click(function() {
         fetch_cards($('#username').val(), $('#password').val());
-      };
+      });
+      $('#add-card').click(function() {
+        add_new_card($('#card-text').val());
+      });
       $("#password").val(load_password());
     </script>
 </body></html>
