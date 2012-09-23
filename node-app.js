@@ -38,6 +38,7 @@ var fetch_cards = function(username, password, on_success, on_error) {
 
 var card_data = '';
 var url_parser = require('url');
+var fs = require('fs');
 
 
 var handler = function(request, response) {
@@ -46,11 +47,8 @@ var handler = function(request, response) {
     render_wall_to(response);  
   }
   else if (request.url.indexOf('.js') !== -1) {
-    var fs = require('fs');
     var filedata = fs.readFileSync('.' + request.url, "utf8");
-    response.writeHeader(200, {'Content-Type': 'text/javascript'});
-    response.write(filedata);
-    response.end();
+    render('text/javascript', filedata, response);
   }
   else if (request.url.indexOf('fetch_cards') !== -1) {
     var params = url_parser.parse(request.url, true)['query'];
@@ -74,23 +72,7 @@ function render_json_to(json, response) {
 };
 
 function render_wall_to(response) {
-    render('text/html', 
-      '<html><head>' 
-      + '<script src="lib/fabric.js"></script>'
-      + '<script src="lib/jquery-1.8.2.js"></script>'
-      + '<script src="lib/jquery.cookie.js"></script>'
-      + '<script type="text/javascript">'
-      + "  var fetch_cards = function(username, password) { var card_data = $.getJSON('fetch_cards?password=' + password + '&username=' + username, function(card_data) {"
-      + '      draw_cards(card_data);'
-      + '    });'
-      + '  };'
-      + '</script>'
-      + '</head><body>' 
-      +   '<div id="message">hello! Please enter username <input type="text" id="username" value="dmoore"/> and password <input type="password" id="password"/> on mingle project and click on:<input type="button" value="Go" onclick="fetch_cards($(\'#username\').val(), $(\'#password\').val());"/></div>'
-      +   '<canvas id="wall" width="940" height="500"></canvas>' 
-      + '  <script src="lib/whalley-client.js"></script>'
-      + '</body></html>',
-      response);
+    render('text/html', fs.readFileSync('./wall.html', "utf8"), response);
 };
 
 var http = require('http');
