@@ -1,5 +1,3 @@
-
-
 var describe = function(obj) {
   var props = '';
   for (prop in obj) {
@@ -35,11 +33,9 @@ var fetch_cards = function(username, password, on_success, on_error) {
   });
 };
 
-
 var card_data = '';
 var url_parser = require('url');
 var fs = require('fs');
-
 
 var handler = function(request, response) {
   util.log('url: ' + request.url); 
