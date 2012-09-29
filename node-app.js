@@ -9,7 +9,7 @@ var describe = function(obj) {
 var util = require('util');
 var https = require('https');
 
-var fetch_cards = function(username, password, on_success, on_error) {
+var fetch_mingle_cards = function(username, password, on_success, on_error) {
   util.log('making mql request...(using ' + https + ')');
 
   var cards = '';
@@ -36,6 +36,23 @@ var fetch_cards = function(username, password, on_success, on_error) {
 var card_data = '';
 var url_parser = require('url');
 var fs = require('fs');
+var path = require('path');
+
+var ensure_dir = function (dirname) {
+  if (! (path.existsSync(dirname))) {
+    fs.mkdirSync(dirname);
+  }
+}
+
+var write_data = function (data) {
+  ensure_dir('./.store');
+  fs.writeFileSync('.store/json', data, 'utf8');
+}
+
+var read_data = function () {
+  var file = './.store/json';  
+  return path.existsSync(file) ? fs.readFileSync(file, 'utf8') : '[]';
+}
 
 var handler = function(request, response) {
   util.log('url: ' + request.url); 
@@ -46,9 +63,30 @@ var handler = function(request, response) {
     var filedata = fs.readFileSync('.' + request.url, "utf8");
     render('text/javascript', filedata, response);
   }
+  else if (request.url.indexOf('read') !== -1) {
+    var filedata = read_data();
+    util.log('file data: ' + filedata);
+    render_json_to(filedata, response);
+  }
+  else if (request.url.indexOf('write') !== -1) {
+    if (request.method === 'POST') {
+      data = '';
+      request.on('data', function (some_data) { 
+        data += some_data; 
+      });
+      request.on('end', function () {
+        write_data(data); 
+        render('text/plain', 'Stored', response);
+      });
+    }
+    else {
+      response.statusCode = 404;
+      render('text/plain', 'Need to write with a post', response);
+    }
+  }
   else if (request.url.indexOf('fetch_cards') !== -1) {
     var params = url_parser.parse(request.url, true)['query'];
-    fetch_cards(params['username'], params['password'], function(cards) {
+    fetch_mingle_cards(params['username'], params['password'], function(cards) {
       render_json_to(cards, response);
     },
     function(error) {
