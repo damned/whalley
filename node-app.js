@@ -9,10 +9,24 @@ var describe = function(obj) {
 var util = require('util');
 var https = require('https');
 
+var mingle_cards_to_whalley_data = function(mingle_cards) {
+  var data = {};
+  cards = {};
+  data['meta'] = {};
+  data['cards'] = cards;
+  mingle_cards.forEach(function(single_card) {
+    cards[single_card['Number']] = {
+      id: single_card['Number'],
+      text: single_card['Name']
+    }
+  });
+  return data;
+}
+
 var fetch_mingle_cards = function(username, password, on_success, on_error) {
   util.log('making mql request...(using ' + https + ')');
 
-  var cards = '';
+  var mingle_cards = '';
 
   var auth = 'Basic ' + new Buffer(username + ':' + password).toString('base64');
   var header = {'Host': 'mingle01.thoughtworks.com', 'Authorization': auth};
@@ -21,11 +35,13 @@ var fetch_mingle_cards = function(username, password, on_success, on_error) {
     util.log("Got mql response: " + res.statusCode);
     res.on('data', function(data) {
       util.log("Got data: " + data);
-      cards = cards + data;
+      mingle_cards = mingle_cards + data;
     });
     res.on('end', function() {
-      util.log("Got all card data: " + cards);
-      on_success(cards);
+      util.log("Got all card data: " + mingle_cards);
+      var whalley_card_json = JSON.stringify(mingle_cards_to_whalley_data(JSON.parse(mingle_cards)), undefined, 2);
+      util.log("Translated: " + whalley_card_json);
+      on_success(whalley_card_json);
     });
   }).on('error', function(error) {
     util.log(error);
