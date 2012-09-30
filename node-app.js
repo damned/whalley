@@ -70,14 +70,41 @@ var read_data = function () {
   return path.existsSync(file) ? fs.readFileSync(file, 'utf8') : '[]';
 }
 
+var resources = [
+  (new function() {
+    this.handle = function(request, response) {
+      if (request.url.indexOf('.jpg') !== -1) {
+        respond_with_file(request.url, 'image/jpeg', response);
+        return true;
+      }
+      return false;
+    }
+  })
+];
+
+var respond_with_file = function(url, content_type, response) {
+  // TODO securify
+  var filedata = fs.readFileSync('.' + url);
+  render(content_type, filedata, response);
+}
+
 var handler = function(request, response) {
-  util.log('url: ' + request.url); 
-  if (request.url.indexOf('wall') !== -1) {
+  util.log('url: ' + request.url);
+  var handled = false;
+  resources.forEach(function(resource) {
+    if (!handled && resource.handle(request, response)) {
+      handled = true;
+    }
+  });
+  
+  if (handled) {
+    // already handled by new funky resources
+  }
+  else if (request.url.indexOf('wall') !== -1) {
     render_wall_to(response);  
   }
   else if (request.url.indexOf('.js') !== -1) {
-    var filedata = fs.readFileSync('.' + request.url, "utf8");
-    render('text/javascript', filedata, response);
+    respond_with_file(request.url, 'text/javascript', response);
   }
   else if (request.url.indexOf('read') !== -1) {
     var filedata = read_data();
