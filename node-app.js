@@ -17,6 +17,15 @@ var resources = [
       }
       return false;
     }
+  }),
+  (new function() {
+    this.handle = function(request, response) {
+      if (request.url.indexOf('wall') !== -1) {
+        render_wall_to(response);
+        return true;
+      }
+      return false;
+    }
   })
 ];
 
@@ -37,9 +46,6 @@ var handler = function(request, response) {
   
   if (handled) {
     // already handled by new funky resources
-  }
-  else if (request.url.indexOf('wall') !== -1) {
-    render_wall_to(response);  
   }
   else if (request.url.indexOf('.js') !== -1) {
     respond_with_file(request.url, 'text/javascript', response);
