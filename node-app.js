@@ -8,15 +8,19 @@ var path = require('path');
 
 var card_data = '';
 
-var resources = [
-  (new function() {
-    this.handle = function(request, response) {
-      if (request.url.indexOf('.jpg') !== -1) {
-        respond_with_file(request.url, 'image/jpeg', response);
-        return true;
-      }
-      return false;
+function UrlContainsHandler(contained, handler) {
+  this.handle = function(request, response) {
+    if (request.url.indexOf(contained) !== -1) {
+      handler(request, response);
+      return true;
     }
+    return false;
+  }
+}
+
+var resources = [
+  new UrlContainsHandler('.jpg', function(request, response) {
+    respond_with_file(request.url, 'image/jpeg', response)
   }),
   (new function() {
     this.handle = function(request, response) {
