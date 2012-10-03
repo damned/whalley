@@ -21,3 +21,15 @@ exports.UrlContainsHandler = function(contained, handler) {
 exports.add_on_url_contains = function(contained, handler) {
   exports.add(new exports.UrlContainsHandler(contained,handler));
 }
+
+exports.render = function(type, content, response) {
+  response.setHeader('Content-Type', type);
+  response.write(content);
+  response.end();
+};
+
+exports.render_json_to = function(json, response) {
+  exports.render('application/json', json, response);
+};
+
+
