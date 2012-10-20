@@ -26,8 +26,8 @@ resources.add_on_url_contains('fetch_cards', function(request, response) {
       data['meta'] = {};
       data['cards'] = cards;
       cards.push({
-        text: "'" + error + "'",
-        id: "'" + 999 + "'"
+        text: 'fetch from mingle failed (' + error + ')',
+        id: 999
       });
       resources.render_json_to(JSON.stringify(data), response);
     });
