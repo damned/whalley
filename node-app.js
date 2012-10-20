@@ -13,12 +13,24 @@ var card_data = '';
 
 resources.add_on_url_contains('fetch_cards', function(request, response) {
   var params = url_parser.parse(request.url, true)['query'];
-  mingle.fetch_cards(params['username'], params['password'], function(cards) {
-    resources.render_json_to(cards, response);
-  },
-  function(error) {
-    resources.render_json_to('[ { text: "' + error + '", id: "999"} ]', response);
-  });
+  mingle.fetch_cards(
+    params['username'], 
+    params['password'], 
+    function(data) {
+      resources.render_json_to(data, response);
+    },
+    function(error) {
+      util.log('yep, got an error: ' + error)
+      var data = {};  //extract and dedupe, mingle, app
+      var cards = [];
+      data['meta'] = {};
+      data['cards'] = cards;
+      cards.push({
+        text: "'" + error + "'",
+        id: "'" + 999 + "'"
+      });
+      resources.render_json_to(JSON.stringify(data), response);
+    });
 });
 resources.add_on_url_contains('wall', function(request, response) {
   render_wall_to(response)

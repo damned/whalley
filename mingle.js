@@ -1,5 +1,5 @@
 var cards_to_whalley_data = function(mingle_cards) {
-  var data = {};
+  var data = {};  //extract and dedupe, mingle, app
   var cards = {};
   data['meta'] = {};
   data['cards'] = cards;
@@ -22,7 +22,7 @@ exports.fetch_cards = function(username, password, on_success, on_error) {
 
   var auth = 'Basic ' + new Buffer(username + ':' + password).toString('base64');
   var header = {'Host': 'mingle01.thoughtworks.com', 'Authorization': auth};
-
+  
   https.get({ host: "mingle01.thoughtworks.com", path: "/api/v2/projects/is_websites_development/cards/execute_mql.json?mql=select%20name,%20number%20where%20stage%20%3E%20wishlist%20and%20stage%20%3C%20done", headers: header }, function(res) {
     util.log("Got mql response: " + res.statusCode);
     res.on('data', function(data) {
@@ -36,6 +36,7 @@ exports.fetch_cards = function(username, password, on_success, on_error) {
       on_success(whalley_card_json);
     });
   }).on('error', function(error) {
+    util.log('baboom');
     util.log(error);
     on_error(error);
   });
