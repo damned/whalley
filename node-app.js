@@ -54,6 +54,8 @@ function render_wall_to(response) {
 var http = require('http');
 
 var server = http.createServer(handler);
-server.listen(1234);
+var port = 1234;
+console.log('whalley on port ' + port)
+server.listen(port);
 
 
