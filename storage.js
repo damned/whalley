@@ -27,7 +27,10 @@ resources.add_on_url_contains('write', function(request, response) {
       data += some_data; 
     });
     request.on('end', function () {
-      write_data(data); 
+      if (read_data() != data) {
+        util.log('saving data: ' + data);
+        write_data(data);
+      }
       resources.render('text/plain', 'Stored', response);
     });
   }
