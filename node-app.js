@@ -17,6 +17,7 @@ resources.add_on_url_contains('fetch_cards', function(request, response) {
     params['username'], 
     params['password'], 
     function(data) {
+      util.log('got data back from mingle: ' + data)
       resources.render_json_to(data, response);
     },
     function(error) {
