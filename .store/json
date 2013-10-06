@@ -100,38 +100,38 @@
   "cards": {
     "2167": {
       "id": "2167",
-      "left": 148,
-      "top": 158,
-      "colour": "white"
+      "left": 852,
+      "top": 701,
+      "colour": "olive"
     },
     "2170": {
       "id": "2170",
-      "left": 198,
-      "top": 158,
-      "colour": "white"
+      "left": 902,
+      "top": 701,
+      "colour": "olive"
     },
     "2177": {
       "id": "2177",
-      "left": 248,
-      "top": 158,
-      "colour": "white"
+      "left": 952,
+      "top": 701,
+      "colour": "olive"
     },
     "2183": {
       "id": "2183",
-      "left": 298,
-      "top": 158,
-      "colour": "white"
+      "left": 1002,
+      "top": 701,
+      "colour": "olive"
     },
     "2184": {
       "id": "2184",
-      "left": 350,
-      "top": 150,
-      "colour": "white"
+      "left": 1054,
+      "top": 693,
+      "colour": "olive"
     },
     "2186": {
       "id": "2186",
-      "left": 400,
-      "top": 150,
+      "left": 1046,
+      "top": 767,
       "colour": "white"
     },
     "2187": {
@@ -199,8 +199,8 @@
     },
     "-577574": {
       "id": -577574,
-      "left": 117.21510545112278,
-      "top": 192.67924899719358,
+      "left": 248.21510545112278,
+      "top": 245.67924899719358,
       "colour": "rgb(220, 230, 230)",
       "text": "leave bluetack\n"
     },
@@ -220,9 +220,9 @@
     },
     "-593379": {
       "id": -593379,
-      "left": 118.37832514735112,
-      "top": 255.55692272220472,
-      "colour": "white",
+      "left": 83.37832514735112,
+      "top": 224.55692272220472,
+      "colour": "rgb(220, 230, 230)",
       "text": "draw\n"
     },
     "-552336": {
@@ -453,13 +453,13 @@
       "id": -620544,
       "left": 61,
       "top": 145,
-      "colour": "white",
+      "colour": "olive",
       "text": "set area for new cards"
     },
     "-928893": {
       "id": -928893,
-      "left": 83,
-      "top": 586,
+      "left": 92,
+      "top": 655,
       "colour": "white",
       "text": "work offline from source"
     },
