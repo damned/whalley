@@ -94,7 +94,14 @@
       -608115,
       -57982,
       -572540,
-      -825901
+      -825901,
+      -284808,
+      -158715,
+      -175851,
+      -15459,
+      -64662,
+      -189833,
+      -149888
     ]
   },
   "cards": {
@@ -297,8 +304,8 @@
     },
     "-879822": {
       "id": -879822,
-      "left": 86.25241416602285,
-      "top": 401.41508445420527,
+      "left": 99.25241416602285,
+      "top": 149.41508445420527,
       "colour": "white",
       "text": "edit card\n"
     },
@@ -444,16 +451,16 @@
     },
     "-40282": {
       "id": -40282,
-      "left": 371,
-      "top": 144,
+      "left": 608,
+      "top": 145,
       "colour": "white",
       "text": "add any image"
     },
     "-620544": {
       "id": -620544,
-      "left": 61,
-      "top": 145,
-      "colour": "olive",
+      "left": 225,
+      "top": 314,
+      "colour": "white",
       "text": "set area for new cards"
     },
     "-928893": {
@@ -465,22 +472,22 @@
     },
     "-698861": {
       "id": -698861,
-      "left": 489,
-      "top": 228,
+      "left": 476,
+      "top": 437,
       "colour": "white",
       "text": "split card vs fabric"
     },
     "-790794": {
       "id": -790794,
-      "left": 492,
-      "top": 303,
+      "left": 505,
+      "top": 498,
       "colour": "white",
       "text": "isolate fabric"
     },
     "-608115": {
       "id": -608115,
-      "left": 496,
-      "top": 417,
+      "left": 479,
+      "top": 595,
       "colour": "white",
       "text": "push to github"
     },
@@ -504,6 +511,55 @@
       "top": 58,
       "colour": "rgb(220, 230, 230)",
       "text": "CURRENT"
+    },
+    "-284808": {
+      "id": -284808,
+      "left": 460,
+      "top": 152,
+      "colour": "rgb(255,255,102)",
+      "text": "cards as buttons"
+    },
+    "-158715": {
+      "id": -158715,
+      "left": 483,
+      "top": 232,
+      "colour": "white",
+      "text": "different walls"
+    },
+    "-175851": {
+      "id": -175851,
+      "left": 471,
+      "top": 291,
+      "colour": "white",
+      "text": "cards as walls"
+    },
+    "-15459": {
+      "id": -15459,
+      "left": 212,
+      "top": 89,
+      "colour": "white",
+      "text": "wall settings"
+    },
+    "-64662": {
+      "id": -64662,
+      "left": 212,
+      "top": 157,
+      "colour": "white",
+      "text": "mingle card on wall settings"
+    },
+    "-189833": {
+      "id": -189833,
+      "left": 490,
+      "top": 361,
+      "colour": "white",
+      "text": "setting card eg password: ****"
+    },
+    "-149888": {
+      "id": -149888,
+      "left": 366,
+      "top": 708,
+      "colour": "white",
+      "text": "switch to module pattern"
     }
   }
 }

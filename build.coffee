@@ -1,13 +1,18 @@
 require 'shelljs/global'
-sys = require 'sys'
+sys = require 'util'
 
 echo 'Building...'
 
 child = require 'child_process'
 
-puts = (error, out, err) -> sys.puts out; sys.puts err; sys.puts error
+to_stdout = (error, out, err) ->
+  sys.puts out;
+  sys.puts err if err
+  sys.puts "error: #{error}" if error
 
-child.exec './node_modules/.bin/mocha --reporter list --compilers coffee:coffee-script', puts
-
+child.exec './node_modules/.bin/mocha
+             --reporter list
+             --compilers coffee:coffee-script
+             test/server', to_stdout
 
 echo 'Done.'

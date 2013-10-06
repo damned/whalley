@@ -1,5 +1,5 @@
 require 'should';
 
-describe 'second node tests', ->
+describe 'second server tests', ->
   it 'should pass', ->
     'fooo'.should.equal 'fooo'

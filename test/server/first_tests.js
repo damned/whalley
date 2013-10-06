@@ -1,6 +1,6 @@
 require('should');
 
-describe('first node tests', function() {
+describe('first server tests', function() {
   it('should pass', function() {
     'blah'.should.equal("blah");
   })
