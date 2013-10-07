@@ -23,7 +23,7 @@ exports.fetch_cards = function(username, password, on_success, on_error) {
   var auth = 'Basic ' + new Buffer(username + ':' + password).toString('base64');
   var header = {'Host': 'mingle01.thoughtworks.com', 'Authorization': auth};
   
-  https.get({ host: "mingle01.thoughtworks.com", path: "/api/v2/projects/is_websites_development/cards/execute_mql.json?mql=select%20name,%20number%20where%20stage%20%3E%20wishlist%20and%20stage%20%3C%20done", headers: header }, function(res) {
+  https.get({ host: "mingle09.thoughtworks.com", path: "/api/v2/projects/tw_dot_com/cards/execute_mql.json?mql=select%20name,%20number%20where%20(type%20%3D%20story%20or%20type%20%3D%20%27hygiene%20story%27%20or%20type%20%3D%20defect%20or%20type%20%3D%20content)%20and%20status%20%3C%20%27done%20(deployed%20to%20live)%27%20and%20status%20%3E%3D%20next", headers: header }, function(res) {
     util.log("Got mql response: " + res.statusCode);
     res.on('data', function(data) {
       util.log("Got data: " + data);
