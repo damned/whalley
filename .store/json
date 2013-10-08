@@ -75,7 +75,8 @@
       "-947466",
       "-854606",
       "-703861",
-      "-980243"
+      "-980243",
+      -965971
     ]
   },
   "cards": {
@@ -95,8 +96,8 @@
     },
     "705": {
       "id": "705",
-      "left": 767,
-      "top": 569,
+      "left": 765,
+      "top": 713,
       "colour": "rgb(220, 230, 230)",
       "last_modification_status": "QA"
     },
@@ -151,8 +152,8 @@
     },
     "1447": {
       "id": "1447",
-      "left": 657,
-      "top": 571,
+      "left": 660,
+      "top": 572,
       "colour": "rgb(220, 230, 230)",
       "last_modification_status": "Dev done"
     },
@@ -179,10 +180,10 @@
     },
     "1459": {
       "id": "1459",
-      "left": 765,
-      "top": 707,
+      "left": 886,
+      "top": 600,
       "colour": "rgb(220, 230, 230)",
-      "last_modification_status": "QA"
+      "last_modification_status": "QA done"
     },
     "1460": {
       "id": "1460",
@@ -249,8 +250,8 @@
     },
     "-552336": {
       "id": "-552336",
-      "left": 448.5819006199806,
-      "top": 206.6770655631626,
+      "left": 918.5819006199806,
+      "top": 375.6770655631626,
       "colour": "white",
       "text": "spangle when n\new"
     },
@@ -722,6 +723,13 @@
       "top": 132,
       "colour": "white",
       "text": "spangle on change"
+    },
+    "-965971": {
+      "id": -965971,
+      "left": 812,
+      "top": 744,
+      "colour": "rgb(220, 230, 230)",
+      "text": "studios story: talk to Chris"
     }
   }
 }
