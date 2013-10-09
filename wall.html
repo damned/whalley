@@ -20,7 +20,11 @@
     <script src="lib/whalley-client.js"></script>
     <script type="text/javascript">
       $('#load-wall').click(function() {
-        fetch_cards($('#username').val(), $('#password').val());
+        var cardwall_ui = {
+          username: $('#username').val(),
+          password: $('#password').val()
+        }
+        load_wall(cardwall_ui);
       });
       $('#add-card').click(function() {
         add_new_card($('#card-text').val());
