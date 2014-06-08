@@ -1,8 +1,8 @@
 <html><head>
   <title>Websites Whalley</title>
   <script src="lib/fabric.js"></script>
-    <script src="lib/jquery-1.8.2.js"></script>
-    <script src="lib/jquery.cookie.js"></script>
+  <script src="lib/jquery-1.8.2.js"></script>
+  <script src="lib/jquery.cookie.js"></script>
   </head><body>
     <div id="message">
       hello! username <input type="text" id="username" value="dmoore"/> 
@@ -13,16 +13,16 @@
     </div>
     <canvas id="wall" width="1130" height="810"></canvas>
     <div id="image-capture"></div>
-    <script src="lib/colour-wheel.js"></script>
-    <script src="lib/whalley-storage.js"></script>
-    <script src="lib/whalley-card.js"></script>
-    <script src="lib/image-capture.js"></script>
-    <script src="lib/whalley-client.js"></script>
+    <script src="lib/client/colour-wheel.js"></script>
+    <script src="lib/client/whalley-storage.js"></script>
+    <script src="lib/client/whalley-card.js"></script>
+    <script src="lib/client/image-capture.js"></script>
+    <script src="lib/client/whalley-client.js"></script>
     <script type="text/javascript">
       $('#load-wall').click(function() {
         var cardwall_ui = {
           username: $('#username').val(),
-          password: $('#password').val()
+          password: $('#password').val(),
         }
         load_wall(cardwall_ui);
       });
