@@ -5,11 +5,13 @@
   <script src="lib/jquery.cookie.js"></script>
   </head><body>
     <div id="message">
-      hello! username <input type="text" id="username" value="dmoore"/> 
-      password <input type="password" id="password"/> 
+      hello! username: <input type="text" id="username" value="dmoore"/>
+      password: <input type="password" id="password"/>
+      wall id: <input id="wall-id" type="text" value="json"/>
       <input id="load-wall" type="button" value="Load wall"/>
-      <input id="add-card" type="button" value="Add card"/>
+      autosave: <input id="auto-save" type="checkbox" value="unchecked"/>
       <input id="card-text" type="text" value="(new card text)"/>
+      <input id="add-card" type="button" value="Add card"/>
     </div>
     <canvas id="wall" width="1130" height="810"></canvas>
     <div id="image-capture"></div>
@@ -23,6 +25,13 @@
         var cardwall_ui = {
           username: $('#username').val(),
           password: $('#password').val(),
+          get autosave() {
+            return $('#auto-save').is(':checked');
+          },
+          get wall_id() {
+            return $('#wall-id').val();
+          },
+          jaunty: true
         }
         load_wall(cardwall_ui);
       });
