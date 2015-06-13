@@ -1,0 +1,6 @@
+
+just created a cards/ dir in another project to store the basic card ideas for that project.
+
+a convention of .cards or /cards in a project with issue-like info is interesting...  makes sense to track it within the source...
+
+we'd like to keep metadata about, e.g. relationships of major parts of project for diagram purposes, within project repo... 
