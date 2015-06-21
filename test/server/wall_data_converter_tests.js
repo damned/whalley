@@ -43,11 +43,19 @@ describe('wall_data_converter', function() {
       expect(converted.data_version).to.not.exist;
     });
 
-    it('converts version 0.1 cards to pre-versioning format', function() {
+    it('converts version 0.1 data to pre-versioning format', function() {
       var converted = converter.convert(version_0_1_format, null);
 
       json(converted).should.equal(json(pre_versioning_format));
     });
+
+    it('converts pre-versioning format data to version 0.1', function() {
+      var converted = converter.convert(pre_versioning_format, '0.1');
+
+      json(converted).should.equal(json(version_0_1_format));
+    });
+
+    xit('throws if does not understand data version format');
 
     function json(obj) {
       return JSON.stringify(obj);
