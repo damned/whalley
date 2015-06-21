@@ -21,7 +21,7 @@ describe('wall_data_converter', function() {
     };
 
     var version_0_1_format = {
-      data_version: '0.1',
+      structure_version: '0.1',
       cards: [
         { id: 'card-a', top: 123 },
         { id: 'card-b', top: 456 }
@@ -42,10 +42,10 @@ describe('wall_data_converter', function() {
       expect(converted).to.equal(version_0_1_format);
     });
 
-    it('converts version 0.1 data, removing the data version', function() {
+    it('converts version 0.1 data, removing the structure version', function() {
       var converted = converter.convert(version_0_1_format, null);
 
-      expect(converted.data_version).to.not.exist;
+      expect(converted.structure_version).to.not.exist;
     });
 
     it('converts version 0.1 data to pre-versioning format', function() {
@@ -65,17 +65,17 @@ describe('wall_data_converter', function() {
     }
   });
 
-  describe('unknown data_version handling', function() {
+  describe('unknown structure_version handling', function() {
     it('throws on unknown target version', function() {
       expect(function() {
-        converter.convert({data_version: '0.1'}, '1.7');
+        converter.convert({structure_version: '0.1'}, '1.7');
       }).to.throw(/target_version.*1.7/);
     });
 
     it('throws on unknown source version', function() {
       expect(function() {
-        converter.convert({data_version: 'foobar'}, '0.1');
-      }).to.throw(/source.*data_version.*'foobar'/);
+        converter.convert({structure_version: 'foobar'}, '0.1');
+      }).to.throw(/source.*structure_version.*'foobar'/);
     });
   })
 });
