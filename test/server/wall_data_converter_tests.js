@@ -28,9 +28,14 @@ describe('wall_data_converter', function() {
       ]
     }
 
-    it('leaves data when converting preversioned -> preversioned', function() {
+    it('leaves data when converting preversioned -> preversioned (null target_version)', function() {
       expect(converter.convert(pre_versioning_format, null)).to.equal(pre_versioning_format);
     });
+
+    it('also accepts undefined to denoted preversioning', function() {
+      expect(converter.convert(pre_versioning_format, undefined)).to.equal(pre_versioning_format);
+    });
+
     it('leaves data when converting 0.1 -> 0.1', function() {
       var converted = converter.convert(version_0_1_format, '0.1');
 
@@ -55,10 +60,22 @@ describe('wall_data_converter', function() {
       json(converted).should.equal(json(version_0_1_format));
     });
 
-    xit('throws if does not understand data version format');
-
     function json(obj) {
       return JSON.stringify(obj);
     }
   });
+
+  describe('unknown data_version handling', function() {
+    it('throws on unknown target version', function() {
+      expect(function() {
+        converter.convert({data_version: '0.1'}, '1.7');
+      }).to.throw(/target_version.*1.7/);
+    });
+
+    it('throws on unknown source version', function() {
+      expect(function() {
+        converter.convert({data_version: 'foobar'}, '0.1');
+      }).to.throw(/source.*data_version.*'foobar'/);
+    });
+  })
 });

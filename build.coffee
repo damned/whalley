@@ -11,7 +11,7 @@ to_stdout = (error, out, err) ->
   sys.puts "error: #{error}" if error
 
 child.exec './node_modules/.bin/mocha
-             --reporter list
+             --reporter dot
              --compilers coffee:coffee-script
              test/server', to_stdout
 
