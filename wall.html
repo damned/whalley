@@ -10,7 +10,6 @@
       password: <input type="password" id="password"/>
       wall id: <input id="wall-id" type="text" value="json"/>
       <input id="load-wall" type="button" value="Load wall"/>
-      autosave: <input id="auto-save" type="checkbox" value="unchecked"/>
       <input id="card-text" type="text" value="(new card text)"/>
       <input id="add-card" type="button" value="Add card"/>
     </div>
@@ -28,9 +27,6 @@
         var cardwall_ui = {
           username: $('#username').val(),
           password: $('#password').val(),
-          get autosave() {
-            return $('#auto-save').is(':checked');
-          },
           get wall_id() {
             return $('#wall-id').val();
           },
