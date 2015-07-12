@@ -1,0 +1,27 @@
+<html><head>
+  <title>Whalley Card Wall - SVG Beta</title>
+  <script src="/lib/jquery-1.8.2.js"></script>
+  <script src="/lib/jquery.cookie.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  </head><body>
+    <div id="message">
+      hello!
+      <input id="wall-id" type="hidden" value=""/>
+      <input id="card-text" type="text" value="(new card text)"/>
+      <input id="add-card" type="button" value="Add card"/>
+    </div>
+    <div id="wall" width="1130" height="810"/>
+    <div id="image-capture"></div>
+    <script src="lib/client/log.js"></script>
+    <script src="lib/client/colour-wheel.js"></script>
+    <script src="lib/client/whalley-storage.js"></script>
+    <script src="lib/client/whalley-card.js"></script>
+    <script src="lib/client/image-capture.js"></script>
+    <script src="lib/client/socket-io-sync-client.js"></script>
+    <script src="lib/client/whalley-client.js"></script>
+    <script type="text/javascript">
+      $('#add-card').click(function() {
+        add_new_card($('#card-text').val());
+      });
+    </script>
+</body></html>
