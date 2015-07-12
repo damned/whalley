@@ -6,6 +6,8 @@
     "mocha": "*"
   },
   "dependencies": {
-    "cheerio": "*"
+    "cheerio": "*",
+    "socket.io": "*",
+    "svg.js": "*"
   }
 }
