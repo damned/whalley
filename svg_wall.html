@@ -9,6 +9,12 @@
   <style>
     .card {
       border: 2px solid black;
+      background: rgba(200, 200, 200, 0.85);
+    }
+
+    .card:hover {
+      background-color: #eba;
+      cursor: pointer;
     }
   </style>
 </head><body>
@@ -30,6 +36,11 @@
     <script src="/lib/client/whalley-client.js"></script>
     <script type="text/javascript">
       var wall_class = whalley.SvgWall;
+      var cardwall_ui = {
+        get wall_id() {
+          return $('#wall-id').val();
+        },
+      }
       $('#add-card').click(function() {
         add_new_card($('#card-text').val());
       });
