@@ -10,6 +10,8 @@
     "socket.io": "*",
     "svg.js": "*",
     "svg.draggable.js": "*",
+    "http-auth": "*",
+    "htpasswd": "*",
     "ssl-self-signed-certificate": "*"
   }
 }
