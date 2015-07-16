@@ -2,3 +2,5 @@
 npm-debug.log
 .store
 node_modules/
+whalley.key
+whalley.crt

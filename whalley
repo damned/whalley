@@ -1,2 +1,2 @@
 #!/bin/bash
-nodejs whalley-node-app.js
+nodejs whalley-node-app.js $*

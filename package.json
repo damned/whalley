@@ -9,6 +9,7 @@
     "cheerio": "*",
     "socket.io": "*",
     "svg.js": "*",
-    "svg.draggable.js": "*"
+    "svg.draggable.js": "*",
+    "ssl-self-signed-certificate": "*"
   }
 }
