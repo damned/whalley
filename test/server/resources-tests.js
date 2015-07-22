@@ -9,15 +9,19 @@ var result, url;
 var method;
 
 describe('resources', function() {
+  beforeEach(function() {
+    match_handler = function() {
+      match_handler.called = true;
+    };
+    match_handler.called = false;
+  });
   describe('MethodUrlStartsWithHandler', function() {
+
     beforeEach(function() {
-      match_handler = function() {
-        match_handler.called = true;
-      };
-      match_handler.called = false;
       method = 'GET';
       handler = new resources.MethodUrlStartsWithHandler(method, '/the_prefix', match_handler);
     });
+
     context('url starts with prefix', function() {
       beforeEach(function() {
         url = '/the_prefix/the_rest_of_url';
@@ -65,6 +69,31 @@ describe('resources', function() {
       it('does not call the match_handler', function() {
         expect(match_handler.called).to.be.false
       });
+    });
+  });
+
+  describe('UrlContainsHandler', function() {
+    beforeEach(function() {
+      handler = new resources.UrlContainsHandler('a/needle', match_handler);
+    });
+    it('matches urls containing specified substring', function() {
+      result = handler.handle({url: 'path/with/a/needle/in/it'}, response)
+      expect(result).to.be.true
+      expect(match_handler.called).to.be.true
+    });
+    it('does not match urls without substring', function() {
+      result = handler.handle({url: 'path/with/no/needle/in/it'}, response)
+      expect(result).to.be.false
+      expect(match_handler.called).to.be.false
+    });
+  });
+
+  describe('a handler', function() {
+    it('does not throw if handler throws', function() {
+      handler = new resources.UrlContainsHandler('a', function() {
+        throw 'some error'
+      });
+      handler.handle({url: 'a'}, response)
     });
   });
 });
