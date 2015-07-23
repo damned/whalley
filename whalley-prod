@@ -1,0 +1,3 @@
+#!/bin/bash
+nohup ./whalley 80 443 &
+

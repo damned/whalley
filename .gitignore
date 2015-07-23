@@ -5,3 +5,4 @@ node_modules/
 whalley.key
 whalley.crt
 whalley.htpasswd
+nohup.out
