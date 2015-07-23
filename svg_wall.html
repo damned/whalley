@@ -13,11 +13,19 @@
       font-family: 'Trebuchet MS', Trebuchet, Arial;
       font-size: 12;
       text-align: center;
+      word-wrap: break-word;
     }
 
     .card:hover {
       background-color: #eba;
       cursor: pointer;
+    }
+
+    #card_viewer {
+      display: none;
+      position: absolute;
+      background: lightgray;
+      opacity: 0.8;
     }
   </style>
 </head><body>
@@ -26,6 +34,9 @@
       <input id="wall-id" type="hidden" value=""/>
       <input id="card-text" type="hidden" value="(new card text)"/>
       <input id="add-card" type="hidden" value="Add card"/>
+    </div>
+    <div id="card_viewer">
+      default view
     </div>
     <div id="wall" width="1130" height="810"/>
     <div id="image-capture"></div>
