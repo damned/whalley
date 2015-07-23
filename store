@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+var fs = require('fs')
+var argv = require('yargs').demand(1).argv
+var commands = argv._
+var git = require('nodegit')
+
+const STORE_DIR = '.store';
+
+function summarize_wall(wallname) {
+  fs.readFile(STORE_DIR + '/' + wallname, function(err, json) {
+    if (err) throw err
+    var data = JSON.parse(json)
+    if (data && data !== null) {
+      var card_count = data.cards.length;
+      console.log(wallname, (card_count !== undefined ? card_count : 0) + ' cards')
+    }
+  })
+}
+
+function each_wall(handler) {
+  fs.readdir(STORE_DIR, function(err, files) {
+    if (err) throw err
+    files.forEach(function(file) {
+      if (file[0] !== '.') {
+        handler(file);
+      }
+    })
+  })
+}
+function summarize_changed_wall(wall, git_status) {
+  console.log(wall, {
+    modified: git_status.isModified() !== 0,
+    is_new: git_status.isNew() !== 0,
+    in_index: git_status.inIndex() !== 0,
+    in_working_tree: git_status.inWorkingTree() !== 0,
+  })
+}
+
+if (commands[0] == 'list') {
+  each_wall(summarize_wall)
+}
+else if (commands[0] == 'diff') {
+  git.Repository.open(STORE_DIR).then(function(repo) {
+    repo.getStatus().then(function(statuses) {
+      var git_changes = {}
+      statuses.forEach(function (status) {
+        git_changes[status.path()] = status;
+      })
+      each_wall(function(wall) {
+        var git_status = git_changes[wall];
+        if (git_status !== undefined) {
+          summarize_changed_wall(wall, git_status)
+        }
+      })
+    })
+  })
+}

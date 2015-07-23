@@ -1,9 +1,11 @@
 {
-"name": "whalley",
-"version": "0.2.0",
+  "name": "whalley",
+  "version": "0.2.0",
   "devDependencies": {
     "chai": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "nodegit": "*",
+    "yargs": "*"
   },
   "dependencies": {
     "cheerio": "*",
