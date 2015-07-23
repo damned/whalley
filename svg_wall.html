@@ -22,10 +22,10 @@
   </style>
 </head><body>
     <div id="message">
-      hello!
+      hello! this SVG wall is READONLY as yet - go to <a id="editable" href="/wall">the fabric wall</a> over HTTPS and load wall <span id="wall_id_display">from this wall id</span> to edit :)
       <input id="wall-id" type="hidden" value=""/>
-      <input id="card-text" type="text" value="(new card text)"/>
-      <input id="add-card" type="button" value="Add card"/>
+      <input id="card-text" type="hidden" value="(new card text)"/>
+      <input id="add-card" type="hidden" value="Add card"/>
     </div>
     <div id="wall" width="1130" height="810"/>
     <div id="image-capture"></div>
@@ -49,5 +49,9 @@
       $('#add-card').click(function() {
         add_new_card($('#card-text').val());
       });
+      $(function() {
+        $('#wall_id_display').text("'" + cardwall_ui.wall_id + "'")
+        $('a#editable').attr('href', 'https://' + location.hostname + "/wall")
+      })
     </script>
 </body></html>
