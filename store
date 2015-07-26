@@ -1,20 +1,31 @@
 #!/usr/bin/env node
 var fs = require('fs')
-var argv = require('yargs').demand(1).argv
+var argv = require('yargs').
+    demand(1).
+    boolean('c').
+    alias('c', 'changed').argv
 var commands = argv._
 var git = require('nodegit')
 
 const STORE_DIR = '.store';
 
-function summarize_wall(wallname) {
+function summarize_wall_data(data, wallname) {
+  var card_count = data.cards.length;
+  console.log(wallname, (card_count !== undefined ? card_count : 0) + ' cards')
+}
+
+function read_wall_data(wallname, handler) {
   fs.readFile(STORE_DIR + '/' + wallname, function(err, json) {
     if (err) throw err
     var data = JSON.parse(json)
     if (data && data !== null) {
-      var card_count = data.cards.length;
-      console.log(wallname, (card_count !== undefined ? card_count : 0) + ' cards')
+      handler(data, wallname);
     }
   })
+}
+
+function summarize_wall(wallname) {
+  read_wall_data(wallname, summarize_wall_data);
 }
 
 function each_wall(handler) {
@@ -27,7 +38,7 @@ function each_wall(handler) {
     })
   })
 }
-function summarize_changed_wall(wall, git_status) {
+function summarize_changed_wall(repo, wall, git_status) {
   console.log(wall, {
     modified: git_status.isModified() !== 0,
     is_new: git_status.isNew() !== 0,
@@ -36,22 +47,48 @@ function summarize_changed_wall(wall, git_status) {
   })
 }
 
-if (commands[0] == 'list') {
-  each_wall(summarize_wall)
-}
-else if (commands[0] == 'diff') {
+function each_changed_wall_in_repo(handler) {
   git.Repository.open(STORE_DIR).then(function(repo) {
     repo.getStatus().then(function(statuses) {
       var git_changes = {}
-      statuses.forEach(function (status) {
+      statuses.forEach(function(status) {
         git_changes[status.path()] = status;
       })
       each_wall(function(wall) {
         var git_status = git_changes[wall];
         if (git_status !== undefined) {
-          summarize_changed_wall(wall, git_status)
+          handler(repo, wall, git_status)
         }
       })
     })
   })
+}
+
+if (commands[0] == 'list') {
+  if (argv.changed) {
+    each_changed_wall_in_repo(summarize_changed_wall);
+  }
+  else {
+    each_wall(summarize_wall)
+  }
+}
+else if (commands[0] == 'diff') {
+  each_changed_wall_in_repo(function(repo, wall, git_status) {
+    repo.getBranchCommit('master').then(function(commit) {
+      return commit.getEntry(wall);
+    }).then(function(wallTreeEntry) {
+      wallTreeEntry.getBlob().then(function(blob) {
+        try {
+          console.log("wall '" + wall + "' blob len: " + blob.rawsize())
+          var previous = JSON.parse(blob.toString())
+          read_wall_data(wall, function(data) {
+            console.log("previous had " + previous.cards.length + " cards")
+            console.log("current has " + data.cards.length + " cards")
+          })
+        } catch (e) {
+          console.error(e)
+        }
+      });
+  });
+  });
 }
