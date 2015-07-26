@@ -64,6 +64,54 @@ function each_changed_wall_in_repo(handler) {
   })
 }
 
+var diff = require('deep-diff').diff
+
+function card_change_summary(changes) {
+  var summary = []
+  if (changes.top !== undefined || changes.left !== undefined) {
+    summary.push('moved from ' + (changes.left.was || '?') + ',' + (changes.top.was || '?') + ' to ' + (changes.left.became || '?') + ',' + (changes.top.became || '?'))
+  }
+  for (var changed_field in changes) {
+    if (changed_field !== 'top' && changed_field !== 'left') {
+      summary.push(changed_field + ' changed from ' + changes[changed_field].was + ' to ' + changes[changed_field].became)
+    }
+  }
+  return summary.join(', ');
+}
+function compare_walls(before, after) {
+  console.log("before had " + before.cards.length + " cards")
+  console.log("after has " + after.cards.length + " cards")
+  console.log("diffs: ")
+  var modified = {};
+  var added = [];
+  diff(before, after).forEach(function(change) {
+    if (change.path[0] === 'cards') {
+      var card_id = change.path[1];
+      if (change.kind === "E") {
+        modified[card_id] = modified[card_id] || {}
+        modified[card_id][change.path[2]] = { was: change.lhs, became: change.rhs}
+      }
+      else if (change.kind === "A") {
+        var array_change = change.item
+        if (array_change.kind === 'N') {
+          added.push(array_change.rhs)
+        }
+      }
+    }
+    else {
+      console.log("Unhandled change path root: " + change.path[0])
+      console.log(JSON.stringify(change))
+    }
+  })
+  for (var modified_card in modified) {
+    var card_changes = modified[modified_card];
+    console.log("'" + before.cards[modified_card].text.replace(/\n/g, '') + "': " + card_change_summary(card_changes))
+  }
+  for (var added_card in added) {
+    console.log('New card: ' + added[added_card].text)
+  }
+}
+
 if (commands[0] == 'list') {
   if (argv.changed) {
     each_changed_wall_in_repo(summarize_changed_wall);
@@ -79,11 +127,9 @@ else if (commands[0] == 'diff') {
     }).then(function(wallTreeEntry) {
       wallTreeEntry.getBlob().then(function(blob) {
         try {
-          console.log("wall '" + wall + "' blob len: " + blob.rawsize())
           var previous = JSON.parse(blob.toString())
           read_wall_data(wall, function(data) {
-            console.log("previous had " + previous.cards.length + " cards")
-            console.log("current has " + data.cards.length + " cards")
+            compare_walls(previous, data);
           })
         } catch (e) {
           console.error(e)
