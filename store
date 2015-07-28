@@ -65,11 +65,16 @@ function each_changed_wall_in_repo(handler) {
 }
 
 var diff = require('deep-diff').diff
-
-function card_change_summary(changes) {
+function text_summary(card) {
+  if (card.text.indexOf('data:image') === 0) {
+    return '(an image, ' + card.text.length + ' bytes)'
+  }
+  return card.text.split(/\n/).join(' ')
+}
+function card_change_summary(changes, before, after) {
   var summary = []
   if (changes.top !== undefined || changes.left !== undefined) {
-    summary.push('moved from ' + (changes.left.was || '?') + ',' + (changes.top.was || '?') + ' to ' + (changes.left.became || '?') + ',' + (changes.top.became || '?'))
+    summary.push('moved from ' + before.left + ',' + before.top + ' to ' + after.left + ',' + after.top)
   }
   for (var changed_field in changes) {
     if (changed_field !== 'top' && changed_field !== 'left') {
@@ -78,7 +83,8 @@ function card_change_summary(changes) {
   }
   return summary.join(', ');
 }
-function compare_walls(before, after) {
+function compare_walls(wallname, before, after) {
+  console.log("**** wall: " + wallname + " ****")
   console.log("before had " + before.cards.length + " cards")
   console.log("after has " + after.cards.length + " cards")
   console.log("diffs: ")
@@ -105,10 +111,10 @@ function compare_walls(before, after) {
   })
   for (var modified_card in modified) {
     var card_changes = modified[modified_card];
-    console.log("'" + before.cards[modified_card].text.replace(/\n/g, '') + "': " + card_change_summary(card_changes))
+    console.log("'" + text_summary(before.cards[modified_card]) + "': " + card_change_summary(card_changes, before.cards[modified_card], after.cards[modified_card]))
   }
   for (var added_card in added) {
-    console.log('New card: ' + added[added_card].text)
+    console.log('New card: ' + text_summary(added[added_card]))
   }
 }
 
@@ -121,15 +127,15 @@ if (commands[0] == 'list') {
   }
 }
 else if (commands[0] == 'diff') {
-  each_changed_wall_in_repo(function(repo, wall, git_status) {
+  each_changed_wall_in_repo(function(repo, wallname, git_status) {
     repo.getBranchCommit('master').then(function(commit) {
-      return commit.getEntry(wall);
+      return commit.getEntry(wallname);
     }).then(function(wallTreeEntry) {
       wallTreeEntry.getBlob().then(function(blob) {
         try {
           var previous = JSON.parse(blob.toString())
-          read_wall_data(wall, function(data) {
-            compare_walls(previous, data);
+          read_wall_data(wallname, function(data) {
+            compare_walls(wallname, previous, data);
           })
         } catch (e) {
           console.error(e)
