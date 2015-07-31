@@ -21,6 +21,37 @@ describe('logical card', function() {
       expect(card.data_summary()).to.contain('"some text with a \\"quote\\" in it"');
     })
   })
+
+  describe('defaulted properties', function() {
+    describe('when not specified', function() {
+      beforeEach(function(){ card = a_card({}) })
+      it('defaults width and height', function() {
+        expect(card.width).to.eq(100)
+        expect(card.height).to.eq(60)
+      })
+      it('defaults type', function() {
+        expect(card.type).to.eq('text')
+      })
+    })
+    describe('when not specified', function() {
+      it('allows setting of width and height', function() {
+        card = a_card({ width: 1, height: 2})
+
+        expect(card.width).to.eq(1)
+        expect(card.height).to.eq(2)
+      })
+    })
+  })
+
+  describe('arbitrary properties', function() {
+    it('reflects an arbitrary initial property', function() {
+      card = a_card({ some_property: 'abc'})
+
+      expect(card.some_property).to.eq('abc')
+    })
+  })
+
+
   function a_card(cardlike) {
     return new whalley.LogicalCard(cardlike)
   }
