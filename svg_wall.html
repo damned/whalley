@@ -3,12 +3,13 @@
   <script src="/lib/jquery-1.8.2.js"></script>
   <script src="/lib/jquery.cookie.js"></script>
   <script src="/lib/svg.js"></script>
+  <script src="/lib/mousetrap.min.js"></script>
   <script src="/lib/svg.draggable.js"></script>
   <script src="/lib/svg.foreignobject.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <style>
     .card {
-      border: 2px solid black;
+      border: 2px solid gray;
       background: rgba(200, 200, 200, 0.85);
       font-family: 'Trebuchet MS', Trebuchet, Arial;
       font-size: 12;
@@ -27,12 +28,20 @@
       background: lightgray;
       opacity: 0.8;
     }
+
+    .search-hit {
+      background-color: lightgreen !important;
+      color: red;
+      font-weight: bolder;
+    }
   </style>
 </head><body>
     <div id="message">
       hello! this SVG wall is READONLY as yet - go to <a id="editable" href="/wall">the fabric wall</a> over HTTPS and load wall <span id="wall_id_display">from this wall id</span> to edit :)
       <input id="wall-id" type="hidden" value=""/>
       <input id="card-text" type="hidden" value="(new card text)"/>
+      <input id="add-card" type="hidden" value="Add card"/>
+      <input id="search-box" type="text" placeholder="/ or s to search" value=""/>
       <input id="add-card" type="hidden" value="Add card"/>
     </div>
     <div id="card_viewer">
@@ -52,9 +61,21 @@
     <script src="/lib/client/whalley-client.js"></script>
     <script type="text/javascript">
       var wall_class = whalley.SvgWall;
+      var $search = $('#search-box');
+      var search = {
+        focus: function() {
+          $search.focus();
+        },
+        on_change: function(change_handler) {
+          $search.on('input', function() { change_handler($search.val()) });
+        },
+      }
       var cardwall_ui = {
         get wall_id() {
           return $('#wall-id').val();
+        },
+        get search() {
+          return search;
         },
       }
       $('#add-card').click(function() {

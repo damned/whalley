@@ -112,6 +112,15 @@ describe('logical card', function() {
     })
   })
 
+  describe('matches()', function() {
+    it('matches when its text contains the term', function() {
+      expect(a_card({ text: 'wolverhampton'}).matches('ham')).to.be.true
+    })
+    it('matches when its text does not contain the term', function() {
+      expect(a_card({ text: 'bob'}).matches('notbob')).to.be.false
+    })
+  })
+
   describe('arbitrary properties', function() {
     it('reflects an arbitrary initial property', function() {
       card = a_card({ some_property: 'abc'})
