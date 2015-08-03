@@ -2,6 +2,7 @@ var expect = chai.expect;
 
 describe('logical card', function() {
   var card, cardlike;
+  var card_view_created;
 
   describe('data_summary()', function() {
     it('summarises data from initial cardlike', function() {
@@ -159,7 +160,25 @@ describe('logical card', function() {
     })
   })
 
-
+  describe('card view interactions', function() {
+    var wall;
+    beforeEach(function(){
+      wall = {
+        create_text_card_view: fake_create_card_view('text'),
+        create_image_card_view: fake_create_card_view('image')
+      };
+    })
+    describe('card view construction', function() {
+      it('constructs an image card view if text looks like an inline image data url', function() {
+        card = new whalley.LogicalCard({ id: 1, text: 'data:image/pngXXX'}, wall)
+        expect(card_view_created).to.eq('image card view')
+      })
+      it('constructs a text card by default', function() {
+        card = new whalley.LogicalCard({ id: 1, text: 'some text'}, wall)
+        expect(card_view_created).to.eq('text card view')
+      })
+    })
+  })
   function a_card(cardlike) {
     return new whalley.LogicalCard(cardlike)
   }
@@ -169,5 +188,15 @@ describe('logical card', function() {
       cardlike[prop] = extra_props[prop]
     }
     return new whalley.LogicalCard(cardlike)
+  }
+  function fake_create_card_view(type) {
+    return function() {
+      card_view_created = type + ' card view'
+      return {
+        display_as: function() {},
+        display_as_not: function() {},
+        move_to: function() {}
+      }
+    }
   }
 })
