@@ -3,6 +3,13 @@ var expect = chai.expect;
 describe('logical card', function() {
   var card, cardlike;
   var card_view_created;
+  var wall;
+  beforeEach(function(){
+    wall = {
+      create_text_card_view: fake_create_card_view('text'),
+      create_image_card_view: fake_create_card_view('image')
+    };
+  })
 
   describe('data_summary()', function() {
     it('summarises data from initial cardlike', function() {
@@ -47,13 +54,18 @@ describe('logical card', function() {
   describe('required properties', function() {
     it('must have an id', function() {
       expect(function() {
-        a_card({ })
+        a_card({ text: 'a'})
       }).to.throw(/id/)
     })
     it('must have a non-null id', function() {
       expect(function() {
-        a_card({ id: null })
+        a_card({ id: null, text: 'b' })
       }).to.throw(/id/)
+    })
+    it('must have a text field', function() {
+      expect(function() {
+        a_card({ id: '123' })
+      }).to.throw(/text/)
     })
   })
 
@@ -67,7 +79,7 @@ describe('logical card', function() {
 
   describe('data()', function() {
     it('returns object including all defaulted properties', function() {
-      data = a_card({ id: '123' }).data()
+      data = a_card({ id: '123', text: 'some text' }).data()
 
       expect(data.type).to.be.a('string')
       expect(data.left).to.be.a('number')
@@ -81,7 +93,7 @@ describe('logical card', function() {
       expect(card.data().colour).to.eq('red')
     })
     it('converts a numeric id into a string', function() {
-      card = a_card({ id: -1 })
+      card = a_card({ id: -1, text: 'a' })
 
       expect(card.data().id).to.eq('-1')
     })
@@ -161,13 +173,6 @@ describe('logical card', function() {
   })
 
   describe('card view interactions', function() {
-    var wall;
-    beforeEach(function(){
-      wall = {
-        create_text_card_view: fake_create_card_view('text'),
-        create_image_card_view: fake_create_card_view('image')
-      };
-    })
     describe('card view construction', function() {
       it('constructs an image card view if text looks like an inline image data url', function() {
         card = new whalley.LogicalCard({ id: 1, text: 'data:image/pngXXX'}, wall)
@@ -180,14 +185,15 @@ describe('logical card', function() {
     })
   })
   function a_card(cardlike) {
-    return new whalley.LogicalCard(cardlike)
+    return new whalley.LogicalCard(cardlike, wall)
   }
   function a_valid_card(extra_props) {
-    var cardlike = { id: 'some valid id'}
+    var cardlike = { id: 'some valid id', text: 'some text'}
     for (var prop in extra_props) {
       cardlike[prop] = extra_props[prop]
     }
-    return new whalley.LogicalCard(cardlike)
+    console.log('wall in a_valid_card: ' + wall)
+    return new whalley.LogicalCard(cardlike, wall)
   }
   function fake_create_card_view(type) {
     return function() {
@@ -195,7 +201,8 @@ describe('logical card', function() {
       return {
         display_as: function() {},
         display_as_not: function() {},
-        move_to: function() {}
+        move_to: function() {},
+        update_position: function() {}
       }
     }
   }
