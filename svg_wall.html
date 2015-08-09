@@ -22,6 +22,10 @@
       cursor: pointer;
     }
 
+    #shelf:hover {
+      cursor: pointer;
+    }
+
     #card_viewer {
       display: none;
       position: absolute;
@@ -34,6 +38,7 @@
       color: red;
       font-weight: bolder;
     }
+
   </style>
 </head><body>
     <div id="message">
@@ -44,10 +49,10 @@
       <input id="search-box" type="text" placeholder="/ or s to search" value=""/>
       <input id="add-card" type="hidden" value="Add card"/>
     </div>
-    <div id="card_viewer">
+    <div id="wall" width="1130" height="810"></div>
+    <div id="card_viewer" width="1130">
       default view
     </div>
-    <div id="wall" width="1130" height="810"/>
     <div id="image-capture"></div>
     <script src="/lib/client/log.js"></script>
     <script src="/lib/forwarding.js"></script>
