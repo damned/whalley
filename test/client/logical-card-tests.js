@@ -117,6 +117,27 @@ describe('logical card', function() {
     })
   })
 
+  describe('move_happening', function() {
+    it("updates card's x, y, top and left properties", function() {
+      card.move_happening(1, 2)
+
+      expect(card.x).to.eq(1)
+      expect(card.left).to.eq(1)
+      expect(card.y).to.eq(2)
+      expect(card.top).to.eq(2)
+    })
+
+    it('fires the moving event', function() {
+      var fired = false
+
+      card.on_moving(function() { fired = true })
+
+      card.move_happening(3, 4)
+
+      expect(fired).to.be.true
+    })
+  })
+
   describe('last_modification_status', function() {
     context('when card is moved', function(){
       it('is set to the value of status', function() {
