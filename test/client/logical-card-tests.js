@@ -99,6 +99,24 @@ describe('logical card', function() {
     })
   })
 
+  describe('edit_done', function() {
+    it("updates card's text property", function() {
+      card.edit_done('the updated text')
+
+      expect(card.text).to.eq('the updated text')
+    })
+
+    it('fires the changed event', function() {
+      var fired = false
+
+      card.on_changed(function() { fired = true })
+
+      card.edit_done('xx')
+
+      expect(fired).to.be.true
+    })
+  })
+
   describe('last_modification_status', function() {
     context('when card is moved', function(){
       it('is set to the value of status', function() {
