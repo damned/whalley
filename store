@@ -77,7 +77,7 @@ function card_change_summary(changes, before, after) {
     summary.push('moved from ' + before.left + ',' + before.top + ' to ' + after.left + ',' + after.top)
   }
   for (var changed_field in changes) {
-    if (changed_field !== 'top' && changed_field !== 'left') {
+    if (changed_field !== 'top' && changed_field !== 'text' && changed_field !== 'left') {
       summary.push(changed_field + ' changed from ' + changes[changed_field].was + ' to ' + changes[changed_field].became)
     }
   }
