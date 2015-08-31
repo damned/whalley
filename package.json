@@ -16,6 +16,8 @@
     "svg.draggable.js": "*",
     "http-auth": "*",
     "htpasswd": "*",
+    "node-mkdirp": "*",
+    "rimraf": "*",
     "ssl-self-signed-certificate": "*"
   }
 }
