@@ -6,6 +6,67 @@ var converter = require('../../lib/server/wall-data-converter');
 
 describe('wall_data_converter', function() {
   var target_version;
+  describe('0.1 <-> 0.2 conversion', function() {
+    var version_0_1_format_copy;
+    var version_0_1_format;
+    var version_0_2_format;
+
+    beforeEach(function() {
+      version_0_1_format = {
+        structure_version: '0.1',
+        cards: [
+          {id: 'card-a', left: 12, top: 123, text: 'a'},
+          {id: 'card-b', left: 45, top: 456, text: 'b'},
+          {id: 'card-c', left: 1, top: 2, text: 'img: bug.png'},
+          {id: 'card-d', left: 1, top: 2, text: 'data:image/png;base64,XXX='}
+        ]
+      };
+      version_0_2_format = {
+        structure_version: '0.2',
+        cards: [
+          {id: 'card-a', x: 12, y: 123, type: 'text'},
+          {id: 'card-b', x: 45, y: 456, type: 'text'},
+          {id: 'card-b', x: 1, y: 2, type: 'image', text: 'img: images/bug.png'},
+          {id: 'card-d', x: 1, y: 2, type: 'image', text: 'data:image/png;base64,XXX='}
+        ]
+      };
+    })
+
+    it('leaves data when converting 0.2 -> 0.2', function() {
+      var converted = converter.convert(version_0_2_format, '0.2');
+
+      expect(converted).to.equal(version_0_2_format);
+    });
+
+    describe('0.1 -> 0.2', function() {
+      var converted
+      beforeEach(function() {
+        version_0_1_format_copy = JSON.stringify(version_0_1_format)
+        converted = converter.convert(version_0_1_format, '0.2')
+      })
+
+      it('marks version as 0.2', function() {
+        expect(converted.structure_version).to.eq('0.2');
+      })
+
+      it('does not mutate input data', function() {
+        expect(JSON.stringify(version_0_1_format)).to.eq(version_0_1_format_copy);
+      })
+
+      it('replaces left, top with x, y', function() {
+        expect(converted.cards[0].x).to.eq(version_0_1_format.cards[0].left);
+        expect(converted.cards[0].left).to.eq(undefined);
+        expect(converted.cards[0].y).to.eq(version_0_1_format.cards[0].top);
+        expect(converted.cards[0].top).to.eq(undefined);
+      })
+      it('defaults card type to "text"', function() {
+        expect(converted.cards[0].type).to.eq('text')
+        expect(converted.cards[1].type).to.eq('text')
+      })
+
+    })
+  })
+
   describe('converting between 0.1 and pre-versioning formats', function() {
     var pre_versioning_format = {
       meta: {
