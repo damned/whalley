@@ -59,11 +59,25 @@ describe('wall_data_converter', function() {
         expect(converted.cards[0].y).to.eq(version_0_1_format.cards[0].top);
         expect(converted.cards[0].top).to.eq(undefined);
       })
+
       it('defaults card type to "text"', function() {
         expect(converted.cards[0].type).to.eq('text')
         expect(converted.cards[1].type).to.eq('text')
       })
 
+      it('uses "image" type and "image_src" converted to full relative path for referenced image cards', function() {
+        var image_card = converted.cards[2];
+        expect(image_card.type).to.eq('image')
+        expect(image_card.text).to.eq(undefined)
+        expect(image_card.image_src).to.eq('/images/bug.png')
+      })
+
+      it('uses "image" type and "image_src" for inline-data image cards', function() {
+        var image_card = converted.cards[3];
+        expect(image_card.type).to.eq('image')
+        expect(image_card.text).to.eq(undefined)
+        expect(image_card.image_src).to.eq('data:image/png;base64,XXX=')
+      })
     })
   })
 
