@@ -26,8 +26,8 @@ describe('wall_data_converter', function() {
         cards: [
           {id: 'card-a', x: 12, y: 123, type: 'text'},
           {id: 'card-b', x: 45, y: 456, type: 'text'},
-          {id: 'card-b', x: 1, y: 2, type: 'image', text: 'img: images/bug.png'},
-          {id: 'card-d', x: 1, y: 2, type: 'image', text: 'data:image/png;base64,XXX='}
+          {id: 'card-c', x: 1, y: 2, type: 'image', image_src: '/images/bug.png'},
+          {id: 'card-d', x: 1, y: 2, type: 'image', image_src: 'data:image/png;base64,XXX='}
         ]
       };
     })
@@ -79,6 +79,62 @@ describe('wall_data_converter', function() {
         expect(image_card.image_src).to.eq('data:image/png;base64,XXX=')
       })
     })
+    describe('0.2 downgrade to 0.1', function() {
+      var converted
+      beforeEach(function() {
+        version_0_2_format_copy = JSON.stringify(version_0_2_format)
+        converted = converter.convert(version_0_2_format, '0.1')
+      })
+
+      it('marks version as 0.1', function() {
+        expect(converted.structure_version).to.eq('0.1');
+      })
+
+      it('does not mutate input data', function() {
+        expect(JSON.stringify(version_0_2_format)).to.eq(version_0_2_format_copy);
+      })
+
+      it('replaces x, y with left, top', function() {
+        expect(converted.cards[0].left).to.eq(version_0_2_format.cards[0].x);
+        expect(converted.cards[0].x).to.eq(undefined);
+        expect(converted.cards[0].top).to.eq(version_0_2_format.cards[0].y);
+        expect(converted.cards[0].y).to.eq(undefined);
+      })
+
+      it('removes card type for text cards', function() {
+        expect(converted.cards[0].type).to.eq(undefined)
+        expect(converted.cards[1].type).to.eq(undefined)
+      })
+
+      it('uses "image" type and "image_src" converted to full relative path for referenced image cards', function() {
+        var image_card = converted.cards[2];
+        expect(image_card.image_src).to.eq(undefined)
+        expect(image_card.text).to.eq('img: bug.png')
+      })
+
+      it('uses "image" type and "image_src" for inline-data image cards', function() {
+        var image_card = converted.cards[3];
+        expect(image_card.type).to.eq(undefined)
+        expect(image_card.image_src).to.eq(undefined)
+        expect(image_card.text).to.eq('data:image/png;base64,XXX=')
+      })
+    })
+
+    describe('preversioned upgrade to 0.2', function() {
+      it('upgrades completely', function() {
+        expect(converter.convert(
+            {
+              meta: {'lowfi-card-ids': ['card']},
+              cards: {card: {id: 'card', top: 1, left: 2, text: 'hey'}}
+            },
+            '0.2')).to.eql(
+            {
+              structure_version: '0.2',
+              cards: [{id: 'card', x: 2, y: 1, type: 'text', text: 'hey'}]
+            }
+        )
+      })
+    })
   })
 
   describe('converting between 0.1 and pre-versioning formats', function() {
@@ -98,8 +154,8 @@ describe('wall_data_converter', function() {
     var version_0_1_format = {
       structure_version: '0.1',
       cards: [
-        { id: 'card-a', top: 123 },
-        { id: 'card-b', top: 456 }
+        {id: 'card-a', top: 123},
+        {id: 'card-b', top: 456}
       ]
     }
 
