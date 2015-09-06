@@ -120,20 +120,27 @@ describe('wall_data_converter', function() {
       })
     })
 
-    describe('preversioned upgrade to 0.2', function() {
-      it('upgrades completely', function() {
-        expect(converter.convert(
-            {
-              meta: {'lowfi-card-ids': ['card']},
-              cards: {card: {id: 'card', top: 1, left: 2, text: 'hey'}}
-            },
-            '0.2')).to.eql(
-            {
-              structure_version: '0.2',
-              cards: [{id: 'card', x: 2, y: 1, type: 'text', text: 'hey'}]
-            }
-        )
-      })
+  })
+
+  describe('preversioned <-> 0.2', function() {
+    var preversioned;
+    beforeEach(function(){
+      preversioned = {
+        meta: {'lowfi-card-ids': ['card']},
+        cards: {card: {id: 'card', top: 1, left: 2, text: 'hey'}}
+      };
+      version_0_2_format = {
+        structure_version: '0.2',
+        cards: [{id: 'card', x: 2, y: 1, type: 'text', text: 'hey'}]
+      };
+    })
+
+    it('upgrades prever -> 0.2', function() {
+      expect(converter.convert(preversioned, '0.2')).to.eql(version_0_2_format)
+    })
+
+    it('downgrades 0.2 -> preversioned', function() {
+      expect(converter.convert(version_0_2_format, null)).to.eql(preversioned)
     })
   })
 
