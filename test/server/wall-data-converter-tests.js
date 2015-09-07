@@ -78,6 +78,14 @@ describe('wall_data_converter', function() {
         expect(image_card.text).to.eq(undefined)
         expect(image_card.image_src).to.eq('data:image/png;base64,XXX=')
       })
+
+      it('leaves unchanged wall metadata', function() {
+        version_0_1_format.wall = { somedata: 'its value' }
+
+        converted = converter.convert(version_0_1_format, '0.2')
+
+        expect(converted.wall).to.eql(version_0_1_format.wall)
+      })
     })
     describe('0.2 downgrade to 0.1', function() {
       var converted
@@ -118,11 +126,19 @@ describe('wall_data_converter', function() {
         expect(image_card.image_src).to.eq(undefined)
         expect(image_card.text).to.eq('data:image/png;base64,XXX=')
       })
+
+      it('leaves unchanged wall metadata', function() {
+        version_0_2_format.wall = { otherdata: 'the value' }
+
+        converted = converter.convert(version_0_2_format, '0.1')
+
+        expect(converted.wall).to.eql(version_0_2_format.wall)
+      })
     })
 
   })
 
-  describe('preversioned <-> 0.2', function() {
+  describe('preversioned <-> 0.2 (double hop [up/down]grade)', function() {
     var preversioned;
     beforeEach(function(){
       preversioned = {
