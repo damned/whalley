@@ -2,7 +2,7 @@ require('should');
 var chai = require('chai');
 var expect = chai.expect;
 
-var converter = require('../../lib/server/wall-data-converter');
+var converter = require('../../lib/server/wall-data-converter.js');
 
 describe('wall_data_converter', function() {
   var target_version;

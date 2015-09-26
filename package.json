@@ -11,13 +11,14 @@
     "yargs": "*"
   },
   "dependencies": {
+    "babel": "*",
     "cheerio": "*",
     "socket.io": "*",
     "svg.js": "*",
     "svg.draggable.js": "*",
     "http-auth": "*",
     "htpasswd": "*",
-    "node-mkdirp": "*",
+    "mkdirp": "*",
     "rimraf": "*",
     "ssl-self-signed-certificate": "*"
   }
