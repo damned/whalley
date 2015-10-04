@@ -62,10 +62,18 @@ describe('logical card', function() {
         a_card({ id: null, text: 'b' })
       }).to.throw(/id/)
     })
-    it('must have a text field', function() {
+    it('must have a text field if specified as text card', function() {
+      expect(function() {
+        a_card({ id: '123', type: 'text'})
+      }).to.throw(/text/)
+    })
+    it('must have a text field if defaults to text card (no type specified)', function() {
       expect(function() {
         a_card({ id: '123' })
       }).to.throw(/text/)
+    })
+    it('does not need a text field if specified as image card', function() {
+      a_card({ id: '123', type: 'image' })
     })
   })
 
@@ -82,8 +90,8 @@ describe('logical card', function() {
       data = a_card({ id: '123', text: 'some text' }).data()
 
       expect(data.type).to.be.a('string')
-      expect(data.left).to.be.a('number')
-      expect(data.top).to.be.a('number')
+      expect(data.x).to.be.a('number')
+      expect(data.y).to.be.a('number')
       expect(data.width).to.be.a('number')
       expect(data.height).to.be.a('number')
     })
@@ -118,13 +126,11 @@ describe('logical card', function() {
   })
 
   describe('move_happening', function() {
-    it("updates card's x, y, top and left properties", function() {
+    it("updates card's x, y properties", function() {
       card.move_happening(1, 2)
 
       expect(card.x).to.eq(1)
-      expect(card.left).to.eq(1)
       expect(card.y).to.eq(2)
-      expect(card.top).to.eq(2)
     })
 
     it('fires the moving event', function() {
@@ -213,10 +219,6 @@ describe('logical card', function() {
 
   describe('card view interactions', function() {
     describe('card view construction', function() {
-      it('constructs an image card view if text looks like an inline image data url', function() {
-        card = new whalley.LogicalCard({ id: 1, text: 'data:image/pngXXX'}, wall)
-        expect(card_view_created).to.eq('image card view')
-      })
       it('constructs a text card by default', function() {
         card = new whalley.LogicalCard({ id: 1, text: 'some text'}, wall)
         expect(card_view_created).to.eq('text card view')
