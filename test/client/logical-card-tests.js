@@ -195,6 +195,9 @@ describe('logical card', function() {
     it('matches when its text does not contain the term', function() {
       expect(a_valid_card({ text: 'bob'}).matches('notbob')).to.be.false
     })
+    it('does not match when text does not exist', function() {
+      expect(an_image_card().matches('some text')).to.be.false
+    })
   })
 
   describe('has_id()', function() {
@@ -225,16 +228,22 @@ describe('logical card', function() {
       })
     })
   })
-  function a_card(cardlike) {
-    return new whalley.LogicalCard(cardlike, wall)
+  function a_card(cardlike, extra_props) {
+    return new whalley.LogicalCard(merge(cardlike, extra_props), wall)
+  }
+  function an_image_card(cardlike) {
+    return a_card({ id: 'some valid id', type: 'image', image_src: 'data:...'})
   }
   function a_valid_card(extra_props) {
-    var cardlike = { id: 'some valid id', text: 'some text'}
-    for (var prop in extra_props) {
-      cardlike[prop] = extra_props[prop]
+    return a_card({ id: 'some valid id', text: 'some text'}, extra_props)
+  }
+  function merge(base, to_merge) {
+    if (to_merge) {
+      for (var prop in to_merge) {
+        base[prop] = to_merge[prop]
+      }
     }
-    console.log('wall in a_valid_card: ' + wall)
-    return new whalley.LogicalCard(cardlike, wall)
+    return base;
   }
   function fake_create_card_view(type) {
     return function() {
