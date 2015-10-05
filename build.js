@@ -12,5 +12,6 @@ var to_stdout = function(error, out, err) {
 }
 
 child.exec('mocha --reporter mocha-unfunk-reporter test/server', to_stdout)
+child.exec('mocha --reporter mocha-unfunk-reporter test/browser', to_stdout)
 
 echo('Done.')
