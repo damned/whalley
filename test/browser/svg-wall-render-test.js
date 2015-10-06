@@ -34,7 +34,7 @@ class Browser {
     return this.driver.getTitle()
   }
   quit() {
-    this.driver.quit()
+    return this.driver.quit()
   }
 }
 
