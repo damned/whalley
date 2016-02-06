@@ -53,7 +53,7 @@ describe('svg wall rendering', function() {
     it('displays card which displays a menu', (done) => {
       var card = second_page.wall().card_named('TODO');
       //card.drag();
-      expect(card.click_menu().text).to.eventually.notify(done)
+      expect(card.click_menu().click_first()).to.eventually.notify(done)
     })
   })
 })

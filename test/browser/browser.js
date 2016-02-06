@@ -28,6 +28,9 @@ class Node {
     })
     return d.promise;
   }
+  get driver() {
+    return this.element.getDriver()
+  }
 }
 
 class Nodes {
@@ -52,16 +55,33 @@ class Nodes {
   }
 }
 
+class Menu extends Node {
+  click_first() {
+    let d = webdriver.promise.defer();
+    this.element.then((el) => {
+      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:0, y:-2}).click().perform().then(function() {
+        setTimeout(d.fulfill, 1000)
+      })
+    })
+    return d.promise;
+  }
+}
+
 class Card extends Node {
   constructor(element) {
     super(element)
     this.type = 'card'
   }
   click_menu() {
+    let d = webdriver.promise.defer();
     this.element.then((el) => {
-      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform()
+      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform().then(() => {
+        el.getDriver().findElement({css: 'g.options_menu'}).then((menu_el) => {
+          d.fulfill(menu_el)
+        })
+      })
     })
-    return this;
+    return new Menu(d.promise);
   }
   //drag() {
   //  this.element.then((el) => {
