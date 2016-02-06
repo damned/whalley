@@ -57,6 +57,18 @@ class Card extends Node {
     super(element)
     this.type = 'card'
   }
+  click_menu() {
+    this.element.then((el) => {
+      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform()
+    })
+    return this;
+  }
+  //drag() {
+  //  this.element.then((el) => {
+  //    new webdriver.ActionSequence(el.driver).click(el).perform()
+  //  })
+  //  return this;
+  //}
 }
 
 class Cards extends Nodes {
@@ -125,6 +137,7 @@ class Browser {
     return this.driver.getTitle()
   }
   quit() {
+    console.log("quitting... " + this.driver)
     return this.driver.quit()
   }
 }

@@ -20,14 +20,22 @@ describe('svg wall rendering', function() {
 
     return browser.start()
   })
+  var second_browser, second_page
+  before(() => {
+    second_browser = new Browser()
+    return second_browser.start()
+  })
 
   before(() => {
     page = browser.open('/walls/json')
+    second_page = second_browser.open('/walls/json')
   })
-
 
   after(() => {
     return browser.quit()
+  })
+  after(() => {
+    return second_browser.quit()
   })
 
 
@@ -38,6 +46,15 @@ describe('svg wall rendering', function() {
 
   it('has other cards', (done) => {
     expect(page.wall().card_named('TODO').text).to.eventually.equal('TODO').notify(done)
+  })
+
+  describe('second user', function() {
+
+    it('displays card which displays a menu', (done) => {
+      var card = second_page.wall().card_named('TODO');
+      //card.drag();
+      expect(card.click_menu().text).to.eventually.notify(done)
+    })
   })
 })
 
