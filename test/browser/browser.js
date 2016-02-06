@@ -93,6 +93,19 @@ class Card extends Node {
     }, (err) => { console.log('err: ' + err)})
     return d.promise;
   }
+  edit(text_to_add) {
+    let d = webdriver.promise.defer();
+    this.element.then((el) => {
+      console.log('blah 2!')
+      let as = new webdriver.ActionSequence(el.getDriver());
+      as.click(el).sendKeys.call(as, text_to_add.split(''))
+      as.perform().then(() => {
+        console.log('wowsers 2!')
+        d.fulfill(this)
+      })
+    }, (err) => { console.log('err: ' + err)})
+    return d.promise;
+  }
 }
 
 class Cards extends Nodes {
