@@ -83,12 +83,16 @@ class Card extends Node {
     })
     return new Menu(d.promise);
   }
-  //drag() {
-  //  this.element.then((el) => {
-  //    new webdriver.ActionSequence(el.driver).click(el).perform()
-  //  })
-  //  return this;
-  //}
+  drag() {
+    let d = webdriver.promise.defer();
+    this.element.then((el) => {
+      console.log('blah!')
+      new webdriver.ActionSequence(el.getDriver()).dragAndDrop(el, {x: 100, y: 20 }).perform().then(() => {
+          d.fulfill(this)
+      })
+    }, (err) => { console.log('err: ' + err)})
+    return d.promise;
+  }
 }
 
 class Cards extends Nodes {

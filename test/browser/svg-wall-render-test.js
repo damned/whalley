@@ -28,7 +28,6 @@ describe('svg wall rendering', function() {
 
   before(() => {
     page = browser.open('/walls/json')
-    second_page = second_browser.open('/walls/json')
   })
 
   after(() => {
@@ -51,9 +50,14 @@ describe('svg wall rendering', function() {
   describe('second user', function() {
 
     it('displays card which displays a menu', (done) => {
+      second_page = second_browser.open('/walls/json')
       var card = second_page.wall().card_named('TODO');
-      //card.drag();
-      expect(card.click_menu().click_first()).to.eventually.notify(done)
+      card.click_menu().click_first().then(done)
+    })
+    it('allows card to be dragged', (done) => {
+      second_page = second_browser.open('/walls/json')
+      var card = second_page.wall().card_named('TODO');
+      expect(card.drag()).to.eventually.notify(done)
     })
   })
 })
