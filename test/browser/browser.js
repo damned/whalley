@@ -48,6 +48,12 @@ class Nodes {
           if (text.startsWith(name)) {
             d.fulfill(to_filter)
           }
+        }, (err) => {
+          // stale refs if still running through cards after fulfillment
+          console.log("error getting text (name: " + name + "): " + err)
+          if (!err.toString().startsWith('StaleElementReferenceError')) {
+            throw err
+          }
         })
       });
     })
@@ -97,9 +103,9 @@ class Card extends Node {
     let d = webdriver.promise.defer();
     this.element.then((el) => {
       console.log('blah 2!')
-      let as = new webdriver.ActionSequence(el.getDriver());
-      as.click(el).sendKeys.call(as, text_to_add.split(''))
-      as.perform().then(() => {
+      let actions = new webdriver.ActionSequence(el.getDriver());
+      actions.click(el).sendKeys.call(actions, text_to_add.split(''))
+      actions.perform().then(() => {
         console.log('wowsers 2!')
         d.fulfill(this)
       })
@@ -115,6 +121,47 @@ class Cards extends Nodes {
   }
 }
 
+class Shelf extends Node {
+  drag_down() {
+    let d = webdriver.promise.defer();
+    this.element.then((el) => {
+      console.log('blah sehflf!')
+      let height;
+      el.getLocation().then((loc) => {
+        console.log('loc: ' + JSON.stringify(loc))
+      }).then(() => {
+        el.getSize().then((size) => {
+          console.log('size: ' + JSON.stringify(size))
+          height = size.height;
+        })
+      }).then(() => {
+        new webdriver.ActionSequence(el.getDriver())
+            .mouseMove(el, {x: 2, y: height - 2 })
+            .mouseDown()
+            .mouseMove({x: 100, y: 400 })
+            .mouseUp()
+            .perform().then(() => {
+          setTimeout(() => {d.fulfill(this)}, 2000)
+        })
+      })
+    }, (err) => { console.log('err: ' + err)})
+    return d.promise;
+  }
+  pull_out_card() {
+    let d = webdriver.promise.defer();
+    this.element.then((el) => {
+      console.log('pull out card!')
+      el.getDriver().findElement({css: 'g.blank'}).then((blank_el) => {
+        console.log('found blank!')
+        new webdriver.ActionSequence(el.getDriver()).dragAndDrop(blank_el, {x:0, y:200}).click().sendKeys('n', 'e', 'w').perform().then(() => {
+          setTimeout(() => {d.fulfill(this)}, 2000)
+        })
+      })
+    }, (err) => { console.log('err: ' + err)})
+    return d.promise;
+  }
+}
+
 class Wall {
   constructor(context) {
     this.node = context.find('svg')
@@ -122,6 +169,10 @@ class Wall {
 
   get card() {
     return this.node.find('g.card', {as: Card})
+  }
+
+  get shelf() {
+    return this.node.find('g#shelf', {as: Shelf})
   }
 
   card_named(name) {

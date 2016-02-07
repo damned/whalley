@@ -66,6 +66,13 @@ describe('svg wall rendering', function() {
         expect(edited.text).to.eventually.equal('abcTODO').notify(done)
       })
     })
+    it('allows card to be added', (done) => {
+      second_page = second_browser.open('/walls/json')
+      second_page.wall().shelf.drag_down().then((shelf) => {
+        let last = shelf.pull_out_card()
+        expect(last).to.eventually.notify(done)
+      })
+    })
   })
 })
 
