@@ -40,24 +40,26 @@ class Nodes {
   }
   find_by_text(name) {
     check(this.promise_of_elements, "promise_of_elements")
-    let d = webdriver.promise.defer();
-    let promise_of_first_element = this.promise_of_elements.then(function(all_found) {
+    let search = webdriver.promise.defer();
+    this.promise_of_elements.then(function(all_found) {
       console.log('actually all_found: ' + all_found.length)
       all_found.forEach(function(to_filter) {
         to_filter.getText().then(function(text) {
           if (text.startsWith(name)) {
-            d.fulfill(to_filter)
+            search.fulfill(to_filter)
           }
         }, (err) => {
-          // stale refs if still running through cards after fulfillment
-          console.log("error getting text (name: " + name + "): " + err)
-          if (!err.toString().startsWith('StaleElementReferenceError')) {
+          if (search.isPending() || !err.toString().startsWith('StaleElement')) {
+            console.log("error getting text (name: " + name + ") while search.isPending is " + search.isPending() + ": " + err)
             throw err
+          }
+          else {
+            console.log('ignoring stale element refs post-search')
           }
         })
       });
     })
-    return new this.child_type(d.promise);
+    return new this.child_type(search.promise);
   }
 }
 
