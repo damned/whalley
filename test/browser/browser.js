@@ -25,7 +25,6 @@ class Node {
     return this.element.then(function(el) {
       return webdriver.promise.fulfilled(el.getText());
     })
-    return 'boom'
   }
 }
 
@@ -37,22 +36,26 @@ class Nodes {
   find_by_text(name) {
     check(this.promise_of_elements, "promise_of_elements")
     let search = webdriver.promise.defer();
-    this.promise_of_elements.then(function(all_found) {
-      console.log('actually all_found: ' + all_found.length)
-      all_found.forEach(function(to_filter) {
-        to_filter.getText().then(function(text) {
-          if (text.startsWith(name)) {
-            search.fulfill(to_filter)
+    this.promise_of_elements.then(function(all_refs_found) {
+      console.log('elements returned all_refs_found: ' + all_refs_found.length)
+      webdriver.promise.all(all_refs_found).then(function(all_found) {
+        let el_text_promises = all_found.map((el) => {
+          return el.getText().then((text) => {
+            return { el: el, text: text}
+          })
+        });
+        webdriver.promise.all(el_text_promises).then((el_texts) => {
+          console.log("el_texts length: " + el_texts.length)
+          el_texts.forEach((el_text) => {
+            console.log('search, isPending(): ' + search.isPending() + ', checking: ' + el_text.text)
+            if (el_text.text.startsWith(name)) {
+              search.fulfill(el_text.el)
+            }
+          })
+          if (search.isPending()) {
+            search.cancel()
           }
-        }, (err) => {
-          if (search.isPending() || !err.toString().startsWith('StaleElement')) {
-            console.log("error getting text (name: " + name + ") while search.isPending is " + search.isPending() + ": " + err)
-            throw err
-          }
-          else {
-            console.log('ignoring stale element refs post-search')
-          }
-        })
+        });
       });
     })
     return new this.child_type(search.promise);
@@ -61,13 +64,14 @@ class Nodes {
 
 class Menu extends Node {
   click_first() {
-    let d = webdriver.promise.defer();
-    this.element.then((el) => {
+    console.log('click first...')
+    return this.element.then((el) => {
+      console.log('ready to click first')
       new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:0, y:-2}).click().perform().then(function() {
-        setTimeout(d.fulfill, 1000)
+        console.log('done click first')
+        return this;
       })
     })
-    return d.promise;
   }
 }
 
@@ -137,7 +141,7 @@ class Shelf extends Node {
             .mouseMove({x: 100, y: 400 })
             .mouseUp()
             .perform().then(() => {
-          setTimeout(() => {d.fulfill(this)}, 2000)
+          d.fulfill(this)
         })
       })
     }, (err) => { console.log('err: ' + err)})
@@ -150,10 +154,10 @@ class Shelf extends Node {
       el.getDriver().findElement({css: 'g.blank'}).then((blank_el) => {
         console.log('found blank!')
         new webdriver.ActionSequence(el.getDriver()).dragAndDrop(blank_el, {x:0, y:200}).click().sendKeys('n', 'e', 'w').perform().then(() => {
-          setTimeout(() => {d.fulfill(this)}, 2000)
+          d.fulfill(this)
         })
       })
-    }, (err) => { console.log('err: ' + err)})
+    })
     return d.promise;
   }
 }
@@ -184,6 +188,10 @@ class Page {
 
   title() {
     return this.browser.title()
+  }
+
+  wait_for_wall() {
+    return this.browser.wait_for('.wall_status.ready')
   }
 
   wall() {
@@ -223,6 +231,11 @@ class Browser {
   quit() {
     console.log("quitting... " + this.driver)
     return this.driver.quit()
+  }
+  wait_for(selector) {
+    return this.driver.wait(() => {
+      return webdriver.until.elementLocated({css:selector});
+    }, 20000)
   }
 }
 module.exports = Browser
