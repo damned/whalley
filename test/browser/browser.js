@@ -22,14 +22,10 @@ class Node {
   get text() {
     check(this.element, this.type + ' this.element')
 
-    var d = webdriver.promise.defer();
-    this.element.then(function(el) {
-      d.fulfill(el.getText());
+    return this.element.then(function(el) {
+      return webdriver.promise.fulfilled(el.getText());
     })
-    return d.promise;
-  }
-  get driver() {
-    return this.element.getDriver()
+    return 'boom'
   }
 }
 
@@ -102,17 +98,15 @@ class Card extends Node {
     return d.promise;
   }
   edit(text_to_add) {
-    let d = webdriver.promise.defer();
-    this.element.then((el) => {
+    return this.element.then((el) => {
       console.log('blah 2!')
       let actions = new webdriver.ActionSequence(el.getDriver());
       actions.click(el).sendKeys.call(actions, text_to_add.split(''))
-      actions.perform().then(() => {
+      return actions.perform().then(() => {
         console.log('wowsers 2!')
-        d.fulfill(this)
+        return this
       })
-    }, (err) => { console.log('err: ' + err)})
-    return d.promise;
+    })
   }
 }
 

@@ -24,5 +24,8 @@
     "mkdirp": "*",
     "rimraf": "*",
     "ssl-self-signed-certificate": "*"
+  },
+  "scripts": {
+    "start": "./whalley"
   }
 }

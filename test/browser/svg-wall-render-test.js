@@ -12,6 +12,7 @@ var webdriver = require('selenium-webdriver')
 
 
 describe('svg wall rendering', function() {
+  const wall_path = '/walls/render-test';
   var browser, page
   this.timeout(0)
 
@@ -27,7 +28,7 @@ describe('svg wall rendering', function() {
   })
 
   before(() => {
-    page = browser.open('/walls/json')
+    page = browser.open(wall_path)
   })
 
   after(() => {
@@ -40,7 +41,7 @@ describe('svg wall rendering', function() {
 
   it('displays a card', (done) => {
     expect(page.title()).to.eventually.equal('Whalley SVG Card Wall')
-    expect(page.wall().card.text).to.eventually.equal('MINGLE').notify(done)
+    expect(page.wall().card.text).to.eventually.equal('TODO').notify(done)
   })
 
   it('has other cards', (done) => {
@@ -50,24 +51,25 @@ describe('svg wall rendering', function() {
   describe('second user', function() {
 
     it('displays card which displays a menu', (done) => {
-      second_page = second_browser.open('/walls/json')
+      second_page = second_browser.open(wall_path)
       var card = second_page.wall().card_named('TODO');
       card.click_menu().click_first().then(done)
     })
     it('allows card to be dragged', (done) => {
-      second_page = second_browser.open('/walls/json')
+      second_page = second_browser.open(wall_path)
       var card = second_page.wall().card_named('TODO');
       expect(card.drag()).to.eventually.notify(done)
     })
     it('allows card to be edited', (done) => {
-      second_page = second_browser.open('/walls/json')
+      second_page = second_browser.open(wall_path)
       var card = second_page.wall().card_named('TODO');
-      card.edit('abc').then((edited) => {
-        expect(edited.text).to.eventually.equal('abcTODO').notify(done)
-      })
+
+      var text = card.edit('abc').then((edited) => { return edited.text});
+      check(text, 'text')
+      expect(text).to.eventually.equal('abcTODO').notify(done)
     })
     it('allows card to be added', (done) => {
-      second_page = second_browser.open('/walls/json')
+      second_page = second_browser.open(wall_path)
       second_page.wall().shelf.drag_down().then((shelf) => {
         let last = shelf.pull_out_card()
         expect(last).to.eventually.notify(done)
