@@ -26,6 +26,7 @@
     "ssl-self-signed-certificate": "*"
   },
   "scripts": {
-    "start": "./whalley"
+    "start": "./whalley",
+    "test": "./build"
   }
 }
