@@ -13,6 +13,5 @@ var to_stdout = function(error, out, err) {
 
 child.exec('mocha test/server', to_stdout)
 child.exec('mocha test/browser', to_stdout)
-child.exec('npm run chimp', to_stdout)
 
 echo('Done.')

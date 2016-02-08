@@ -4,7 +4,6 @@
   "devDependencies": {
     "chai": "*",
     "chai-as-promised": "*",
-    "chimp": "*",
     "chromedriver": "*",
     "deep-diff": "*",
     "deep-equal": "*",
@@ -13,9 +12,6 @@
     "mocha-unfunk-reporter": "*",
     "selenium-webdriver": "*",
     "yargs": "*"
-  },
-  "scripts": {
-    "chimp": "./node_modules/chimp/bin/chimp.js --mocha --browser=chrome --path=test/chimp"
   },
   "dependencies": {
     "babel": "*",
