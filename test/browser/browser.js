@@ -76,16 +76,23 @@ class Card extends Node {
     super(element)
     this.type = 'card'
   }
-  click_menu() {
-    let d = promise.defer();
-    this.element.then((el) => {
-      return new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform().then(() => {
-        el.getDriver().findElement({css: 'g.options_menu'}).then((menu_el) => {
-          d.fulfill(menu_el)
-        })
-      })
-    })
-    return new Menu(d.promise);
+  click_menu() {``
+    return new Menu(this.element.then((el) => {
+      return this._click_menu_actions(el).perform().then(this._menu_finder(el.getDriver()))
+    }));
+  }
+
+  _menu_finder(context) {
+    return () => {
+      return context.findElement({css: 'g.options_menu'})
+    }
+  }
+  _click_menu_actions(el) {
+    return this._actions(el).mouseMove(el).mouseMove({x: -30, y: -20}).click();
+  }
+
+  _actions(el) {
+    return new webdriver.ActionSequence(el.getDriver());
   }
   drag() {
     let d = webdriver.promise.defer();
