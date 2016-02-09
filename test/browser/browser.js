@@ -76,11 +76,31 @@ class Card extends Node {
     super(element)
     this.type = 'card'
   }
-  click_menu() {``
+
+  click_menu() {
     return new Menu(this.element.then((el) => {
       return this._click_menu_actions(el).perform().then(this._menu_finder(el.getDriver()))
     }));
   }
+
+  drag() {
+    return this.element.then((el) => {
+      return this._actions(el).dragAndDrop(el, {x: 100, y: 20 }).perform()
+    }).then(() => {
+      return this
+    })
+  }
+
+  edit(text_to_add) {
+    return this.element.then((el) => {
+      var actions = this._actions(el);
+      return actions.click(el).sendKeys.call(actions, text_to_add.split('')).perform()
+    }).then(() => {
+      return this
+    })
+  }
+
+  // "private"
 
   _menu_finder(context) {
     return () => {
@@ -93,27 +113,6 @@ class Card extends Node {
 
   _actions(el) {
     return new webdriver.ActionSequence(el.getDriver());
-  }
-  drag() {
-    let d = webdriver.promise.defer();
-    this.element.then((el) => {
-      console.log('blah!')
-      new webdriver.ActionSequence(el.getDriver()).dragAndDrop(el, {x: 100, y: 20 }).perform().then(() => {
-          d.fulfill(this)
-      })
-    }, (err) => { console.log('err: ' + err)})
-    return d.promise;
-  }
-  edit(text_to_add) {
-    return this.element.then((el) => {
-      console.log('blah 2!')
-      let actions = new webdriver.ActionSequence(el.getDriver());
-      actions.click(el).sendKeys.call(actions, text_to_add.split(''))
-      return actions.perform().then(() => {
-        console.log('wowsers 2!')
-        return this
-      })
-    })
   }
 }
 
@@ -147,7 +146,7 @@ class Shelf extends Node {
           d.fulfill(this)
         })
       })
-    }, (err) => { console.log('err: ' + err)})
+    })
     return d.promise;
   }
   pull_out_card() {
