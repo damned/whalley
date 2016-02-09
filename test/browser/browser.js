@@ -1,46 +1,45 @@
 'use strict';
-var WebDriver = require('webdriver-http-sync');
+var wd = require('webdriver-sync');
+var ChromeDriver = wd.ChromeDriver;
 
 class Node {
-  constructor(driver, element) {
-    this.driver = driver;
+  constructor(element) {
     this.element = element
     this.type = 'node'
   }
   find(locator, extras) {
     let options = extras || {as: Node}
     let type = options.as
-    return new type(this.driver, this.findElement(locator))
+    return new type(this.findElement(locator))
   }
 
   all(locator, extras) {
     let options = extras || {as: Nodes}
     let type = options.as
     let elements = this.findElements(locator)
-    return new type(this.driver, elements)
+    return new type(elements)
   }
 
   get text() {
-    return this.element.get('text')
+    return this.element.getText()
   }
 
   findElement(css) {
-    return this.element.getElement(css)
+    return this.element.findElement(wd.By.cssSelector(css));
   }
   findElements(css) {
-    return this.element.getElements(css)
+    return this.element.findElements(wd.By.cssSelector(css));
   }
 }
 
 class Nodes {
-  constructor(driver, elements) {
-    this.driver = driver;
+  constructor(elements) {
     this.elements = elements
     this.child_type = Node
   }
   find_by_text(name) {
-    return new this.child_type(this.driver, this.elements.find((el) => {
-      return el.get('text').startsWith(name)
+    return new this.child_type(this.elements.find((el) => {
+      return el.getText().startsWith(name)
     }))
   }
 }
@@ -59,17 +58,20 @@ class Menu extends Node {
 }
 
 class Card extends Node {
-  constructor(driver, element) {
-    super(driver, element)
+  constructor(element) {
+    super(element)
     this.type = 'card'
   }
   click_menu() {
-    new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform().then(() => {
-      el.getDriver().findElement({css: 'g.options_menu'}).then((menu_el) => {
-        d.fulfill(menu_el)
+    let d = webdriver.promise.defer();
+    this.element.then((el) => {
+      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform().then(() => {
+        el.getDriver().findElement({css: 'g.options_menu'}).then((menu_el) => {
+          d.fulfill(menu_el)
+        })
       })
     })
-    return new Menu(this.driver, this.element);
+    return new Menu(d.promise);
   }
   drag() {
     let d = webdriver.promise.defer();
@@ -95,8 +97,8 @@ class Card extends Node {
 }
 
 class Cards extends Nodes {
-  constructor(driver, elements) {
-    super(driver, elements)
+  constructor(elements) {
+    super(elements)
     this.child_type = Card
   }
 }
@@ -182,24 +184,24 @@ class Page {
 class Browser {
   constructor() {
     this.base_uri = 'http://localhost:1234'
-    this.driver = new WebDriver('http://127.0.0.1:9515', {});
+    this.driver = new ChromeDriver();
   }
   start() {
-    return this
+    return this.driver.getWindowHandle()
   }
   find(locator) {
-    return new Node(this.driver, this.driver.getElement(locator))
+    return new Node(this.driver.findElement(wd.By.cssSelector(locator)))
   }
   open(path) {
-    this.driver.navigateTo(this.base_uri + path)
+    this.driver.get(this.base_uri + path)
     return new Page(this)
   }
   title() {
-    return this.driver.getPageTitle()
+    return this.driver.getTitle()
   }
   quit() {
     console.log("quitting... " + this.driver)
-    return this.driver.close()
+    return this.driver.quit()
   }
   wait_for(selector) {
     return this.driver.wait(() => {
