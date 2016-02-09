@@ -10,7 +10,7 @@
     "mocha": "*",
     "nodegit": "*",
     "mocha-unfunk-reporter": "*",
-    "selenium-webdriver": "*",
+    "webdriver-http-sync": "*",
     "yargs": "*"
   },
   "dependencies": {
