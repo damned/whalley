@@ -9,15 +9,32 @@ class Node {
   }
 
   find(locator, extras) {
-    return this._wrapped(this.element.findElement({css: locator}), Node, extras);
+    let options = extras || {}
+    var type = options.as || Node;
+    var parent = options.parent;
+    let element = this.element.findElement({css: locator});
+    return new type(element, parent)
   }
 
   all(locator, extras) {
-    return this._wrapped(this.element.findElements({css: locator}), Nodes, extras);
+    let options = extras || {}
+    var type = options.as || Nodes;
+    let elements = this.element.findElements({css: locator});
+    return new type(elements)
   }
 
   get text() {
-    return this.element.then((el) => { return el.getText() })
+    return this.element.then((el) => {
+      console.log(el)
+      return el.getText() })
+  }
+
+  get height() {
+    return this.element.then((el) => {
+      return el.getSize().then((size) => {
+        return size.height;
+      })
+    })
   }
 
   // "private"
@@ -28,11 +45,6 @@ class Node {
 
   _selfie() {
     return () => { return this }
-  }
-
-  _wrapped(elements, default_type, extras) {
-    let options = extras || {as: default_type}
-    return new options.as(elements)
   }
 }
 module.exports = Node

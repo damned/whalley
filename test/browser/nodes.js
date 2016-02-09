@@ -14,25 +14,37 @@ class Nodes {
   }
 
   _element_by_text(name) {
-    return this._element_with_value('getText', (t) => { return t.startsWith(name) });
+    return this._element_matching(
+      (el) => { return el.getText() },
+      (t) => { return t.startsWith(name) }
+    );
   }
 
   _elements_and_values(getter) {
     return this._resolved_elements().then(function (all_found) {
       return all_found.map((el) => {
-        return el[getter].apply(el).then((value) => {
+        return getter(el).then((value) => {
           return {el: el, value: value}
-        })
+        }).thenCatch((err) => { console.log("caught cha !!!!! " + err) })
       })
     }).then(promise.all);
   }
 
-  _element_with_value(value_getter, value_matcher) {
+  _element_matching(value_getter, value_matcher) {
     return this._elements_and_values(value_getter).then((values) => {
+      console.log('_element_matching')
       return values.find((el_and_value) => {
         return value_matcher(el_and_value.value)
       }).el
     });
+  }
+
+  _elements_matching(value_getter, value_matcher) {
+    return this._elements_and_values(value_getter).then((values) => {
+      return values.filter((el_and_value) => {
+        return value_matcher(el_and_value.value)
+      })
+    }).then((matching) => { return matching.map((el_and_value) => { return el_and_value.el }) });
   }
 
   _resolved_elements() {

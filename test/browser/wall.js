@@ -12,13 +12,16 @@ class Wall {
     return this.node.find('g.card', {as: Card})
   }
 
+  get cards() {
+    return this.node.all('g.card', {as: Cards})
+  }
+
   get shelf() {
-    return this.node.find('g#shelf', {as: Shelf})
+    return this.node.find('g#shelf', {as: Shelf, parent: this})
   }
 
   card_named(name) {
-    var cards = this.node.all('g.card', {as: Cards});
-    return cards.find_by_text(name);
+    return this.cards.find_by_text(name);
   }
 }
 module.exports = Wall

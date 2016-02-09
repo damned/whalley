@@ -23,7 +23,7 @@ class Card extends Node {
   edit(text_to_add) {
     return this.element.then((el) => {
       var actions = this._actions(el);
-      return actions.click(el).sendKeys.call(actions, text_to_add.split('')).perform()
+      return actions.click(el).click().sendKeys.call(actions, text_to_add.split('')).perform()
     }).then(this._selfie())
   }
 

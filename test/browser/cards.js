@@ -7,5 +7,11 @@ class Cards extends Nodes {
     super(elements)
     this.child_type = Card
   }
+  get size() {
+    return this._elements_matching(
+      (el) => { return el.getAttribute('class') },
+      (classes) => { return classes === 'card' }
+    ).then((cards) => { return cards.length })
+  }
 }
 module.exports = Cards
