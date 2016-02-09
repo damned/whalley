@@ -3,9 +3,17 @@ var webdriver = require('selenium-webdriver')
 var Node = require('./node')
 
 class Menu extends Node {
+  constructor(element, parent) {
+    super(element)
+    this.parent = parent
+    element.then((el) => {
+      this.driver = el.getDriver()
+    })
+  }
+
   click_first() {
     console.log('1')
-    this.element.then((el) => {
+    return this.element.then((el) => {
       console.log('2')
       return new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({
         x: 2,
@@ -15,18 +23,19 @@ class Menu extends Node {
       console.log('3')
       return this;
     })
-    return this;
   }
 
   click_cancel() {
-    return this.element.then((el) => {
-      return this.height.then((height) => {
-        return new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({
-          x: 2,
-          y: height-2
-        }).click().perform()
+    let parent = this.parent;
+    return this._menu_finder(this.driver)().then((el) => {
+      return this._height_getter(el).then((height) => {
+        return this._actions(el)
+          .mouseMove(el)
+          .mouseMove({ x: 2, y: height-2 })
+          .click()
+          .perform()
       }).then(function () {
-        return this;
+        return parent;
       })
     })
   }

@@ -29,11 +29,6 @@ class Card extends Node {
 
   // "private"
 
-  _menu_finder(context) {
-    return () => {
-      return context.findElement({css: 'g.options_menu'})
-    }
-  }
   _click_menu_actions(el) {
     return this._actions(el).mouseMove(el).mouseMove({x: -30, y: -20}).click();
   }

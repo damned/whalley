@@ -49,10 +49,9 @@ describe('svg wall', function() {
 
   it('card displays a menu', (done) => {
     var card = page.wall().card_named('updated new');
-    var menu = card.click_menu()
-    menu.click_first()
-    menu.click_cancel()
-    expect(menu.element).to.eventually.notify(done)
+    card.click_menu().click_first().then((menu) => {
+      expect(menu.click_cancel()).to.eventually.notify(done)
+    })
   })
 
   it('allows card to be dragged', (done) => {
@@ -61,6 +60,7 @@ describe('svg wall', function() {
   })
 
 })
+
 
 function check(object, name) {
   console.log(name + ' raw: '    + object)

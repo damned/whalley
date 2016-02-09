@@ -30,14 +30,18 @@ class Node {
   }
 
   get height() {
-    return this.element.then((el) => {
-      return el.getSize().then((size) => {
-        return size.height;
-      })
-    })
+    return this.element.then(this._height_getter)
   }
 
   // "private"
+
+  get _height_getter() {
+    return (el) => {
+      return el.getSize().then((size) => {
+        return size.height;
+      })
+    }
+  }
 
   _actions(el) {
     return new webdriver.ActionSequence(el.getDriver());
@@ -45,6 +49,12 @@ class Node {
 
   _selfie() {
     return () => { return this }
+  }
+
+  _menu_finder(context) {
+    return () => {
+      return context.findElement({css: 'g.options_menu'})
+    }
   }
 }
 module.exports = Node
