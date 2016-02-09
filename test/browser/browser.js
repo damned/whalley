@@ -1,5 +1,6 @@
 'use strict';
 var webdriver = require('selenium-webdriver')
+var promise = webdriver.promise;
 
 class Node {
   constructor(element) {
@@ -7,68 +8,63 @@ class Node {
     this.type = 'node'
   }
   find(locator, extras) {
-    let options = extras || {as: Node}
-    let type = options.as
-    return new type(this.element.findElement({css: locator}))
+    return this.wrapped(this.element.findElement({css: locator}), Node, extras);
   }
   all(locator, extras) {
-    let options = extras || {as: Node}
-    let type = options.as
-    let elements = this.element.findElements({css: locator})
-    check(elements, 'all elements')
-    // NB findElements returns promise of an array
-    return new type(elements)
+    return this.wrapped(this.element.findElements({css: locator}), Nodes, extras);
   }
-  get text() {
-    check(this.element, this.type + ' this.element')
 
-    return this.element.then(function(el) {
-      return webdriver.promise.fulfilled(el.getText());
-    })
+  wrapped(elements, default_type, extras) {
+    let options = extras || {as: default_type}
+    return new options.as(elements)
+  }
+
+  get text() {
+    return this.element.then((el) => { return el.getText() })
   }
 }
 
 class Nodes {
-  constructor(promise_of_elements) {
-    this.promise_of_elements = promise_of_elements
+  constructor(elements_promise) {
+    this.elements = elements_promise
     this.child_type = Node
   }
+
   find_by_text(name) {
-    check(this.promise_of_elements, "promise_of_elements")
-    let search = webdriver.promise.defer();
-    this.promise_of_elements.then(function(all_refs_found) {
-      console.log('elements returned all_refs_found: ' + all_refs_found.length)
-      webdriver.promise.all(all_refs_found).then(function(all_found) {
-        let el_text_promises = all_found.map((el) => {
-          return el.getText().then((text) => {
-            return { el: el, text: text}
-          })
-        });
-        webdriver.promise.all(el_text_promises).then((el_texts) => {
-          console.log("el_texts length: " + el_texts.length)
-          el_texts.forEach((el_text) => {
-            console.log('search, isPending(): ' + search.isPending() + ', checking: ' + el_text.text)
-            if (el_text.text.startsWith(name)) {
-              search.fulfill(el_text.el)
-            }
-          })
-          if (search.isPending()) {
-            search.cancel()
-          }
-        });
-      });
-    })
-    return new this.child_type(search.promise);
+    return new this.child_type(this._element_by_text(name));
+  }
+
+  _element_by_text(name) {
+    return this._element_with_value('getText', (t) => { return t.startsWith(name) });
+  }
+
+  _elements_and_values(getter) {
+    return this._resolved_elements().then(function (all_found) {
+      return all_found.map((el) => {
+        return el[getter].apply(el).then((value) => {
+          return {el: el, value: value}
+        })
+      })
+    }).then(promise.all);
+  }
+
+  _element_with_value(value_getter, value_matcher) {
+    return this._elements_and_values(value_getter).then((values) => {
+      return values.find((el_and_value) => {
+        return value_matcher(el_and_value.value)
+      }).el
+    });
+  }
+
+  _resolved_elements() {
+    return this.elements.then(promise.all);
   }
 }
 
 class Menu extends Node {
   click_first() {
-    console.log('click first...')
     return this.element.then((el) => {
-      console.log('ready to click first')
-      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:0, y:-2}).click().perform().then(function() {
-        console.log('done click first')
+      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:2, y:-2}).click().perform().then(function() {
         return this;
       })
     })
@@ -81,9 +77,9 @@ class Card extends Node {
     this.type = 'card'
   }
   click_menu() {
-    let d = webdriver.promise.defer();
+    let d = promise.defer();
     this.element.then((el) => {
-      new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform().then(() => {
+      return new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({x:-30, y:-20}).click().sendKeys('a', 'b', 'c').perform().then(() => {
         el.getDriver().findElement({css: 'g.options_menu'}).then((menu_el) => {
           d.fulfill(menu_el)
         })
