@@ -22,6 +22,16 @@ class Node {
   get text() {
     return this.element.then((el) => { return el.getText() })
   }
+
+  // "private"
+
+  _actions(el) {
+    return new webdriver.ActionSequence(el.getDriver());
+  }
+
+  _selfie() {
+    return () => { return this }
+  }
 }
 
 class Nodes {
@@ -86,18 +96,14 @@ class Card extends Node {
   drag() {
     return this.element.then((el) => {
       return this._actions(el).dragAndDrop(el, {x: 100, y: 20 }).perform()
-    }).then(() => {
-      return this
-    })
+    }).then(this._selfie())
   }
 
   edit(text_to_add) {
     return this.element.then((el) => {
       var actions = this._actions(el);
       return actions.click(el).sendKeys.call(actions, text_to_add.split('')).perform()
-    }).then(() => {
-      return this
-    })
+    }).then(this._selfie())
   }
 
   // "private"
@@ -111,9 +117,6 @@ class Card extends Node {
     return this._actions(el).mouseMove(el).mouseMove({x: -30, y: -20}).click();
   }
 
-  _actions(el) {
-    return new webdriver.ActionSequence(el.getDriver());
-  }
 }
 
 class Cards extends Nodes {
@@ -125,42 +128,34 @@ class Cards extends Nodes {
 
 class Shelf extends Node {
   drag_down() {
-    let d = webdriver.promise.defer();
-    this.element.then((el) => {
-      console.log('blah sehflf!')
-      let height;
-      el.getLocation().then((loc) => {
-        console.log('loc: ' + JSON.stringify(loc))
-      }).then(() => {
-        el.getSize().then((size) => {
-          console.log('size: ' + JSON.stringify(size))
-          height = size.height;
-        })
-      }).then(() => {
-        new webdriver.ActionSequence(el.getDriver())
+    return this.element.then((el) => {
+      return el.getSize().then((size) => {
+        return size.height;
+      }).then((height) => {
+        return this._actions(el)
             .mouseMove(el, {x: 2, y: height - 2 })
             .mouseDown()
             .mouseMove({x: 100, y: 400 })
             .mouseUp()
-            .perform().then(() => {
-          d.fulfill(this)
-        })
+            .perform().then(this._selfie())
       })
     })
-    return d.promise;
   }
+
   pull_out_card() {
-    let d = webdriver.promise.defer();
-    this.element.then((el) => {
-      console.log('pull out card!')
-      el.getDriver().findElement({css: 'g.blank'}).then((blank_el) => {
-        console.log('found blank!')
-        new webdriver.ActionSequence(el.getDriver()).dragAndDrop(blank_el, {x:0, y:200}).click().sendKeys('n', 'e', 'w').perform().then(() => {
-          d.fulfill(this)
-        })
-      })
+    return this.element.then((el) => {
+      return this._find_blank_in(el.getDriver()).then((blank_el) => {
+        return this._actions(blank_el)
+          .dragAndDrop(blank_el, {x: 0, y: 200})
+          .click()
+          .sendKeys('n', 'e', 'w')
+          .perform()
+      }).then(this._selfie())
     })
-    return d.promise;
+  }
+
+  _find_blank_in(context) {
+    return context.findElement({css: 'g.blank'});
   }
 }
 
@@ -201,15 +196,6 @@ class Page {
   }
 }
 
-function check(object, name) {
-  console.log(name + ' raw: '    + object)
-  console.log(name + ': '    + Object.prototype.toString(object))
-  console.log(name + ' length: '    + object.length)
-  console.log(name + ' then: '    + object.then)
-  console.log(name + ' findElement: '    + object.findElement)
-  console.log(name + ' is promise: '    + webdriver.promise.isPromise(object))
-}
-
 class Browser {
   constructor() {
     this.base_uri = 'http://localhost:1234'
@@ -240,4 +226,5 @@ class Browser {
     }, 20000)
   }
 }
+
 module.exports = Browser
