@@ -9,7 +9,7 @@ var Browser = require('./browser')
 var webdriver = require('selenium-webdriver')
 
 describe('svg wall rendering', function() {
-  const wall_path = '/walls/render-test';
+  const wall_name = 'render-test';
   var browser, page
   this.timeout(3000)
 
@@ -20,7 +20,7 @@ describe('svg wall rendering', function() {
   })
 
   beforeEach(() => {
-    page = browser.open(wall_path)
+    page = browser.open_wall(wall_name)
   })
 
   after(() => {
