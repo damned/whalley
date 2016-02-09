@@ -1,6 +1,5 @@
 'use strict';
-var wd = require('webdriver-sync');
-var ChromeDriver = wd.ChromeDriver;
+var webdriver = require('selenium-webdriver')
 
 class Node {
   constructor(element) {
@@ -10,37 +9,56 @@ class Node {
   find(locator, extras) {
     let options = extras || {as: Node}
     let type = options.as
-    return new type(this.findElement(locator))
+    return new type(this.element.findElement({css: locator}))
   }
-
   all(locator, extras) {
-    let options = extras || {as: Nodes}
+    let options = extras || {as: Node}
     let type = options.as
-    let elements = this.findElements(locator)
+    let elements = this.element.findElements({css: locator})
+    check(elements, 'all elements')
+    // NB findElements returns promise of an array
     return new type(elements)
   }
-
   get text() {
-    return this.element.getText()
-  }
+    check(this.element, this.type + ' this.element')
 
-  findElement(css) {
-    return this.element.findElement(wd.By.cssSelector(css));
-  }
-  findElements(css) {
-    return this.element.findElements(wd.By.cssSelector(css));
+    return this.element.then(function(el) {
+      return webdriver.promise.fulfilled(el.getText());
+    })
   }
 }
 
 class Nodes {
-  constructor(elements) {
-    this.elements = elements
+  constructor(promise_of_elements) {
+    this.promise_of_elements = promise_of_elements
     this.child_type = Node
   }
   find_by_text(name) {
-    return new this.child_type(this.elements.find((el) => {
-      return el.getText().startsWith(name)
-    }))
+    check(this.promise_of_elements, "promise_of_elements")
+    let search = webdriver.promise.defer();
+    this.promise_of_elements.then(function(all_refs_found) {
+      console.log('elements returned all_refs_found: ' + all_refs_found.length)
+      webdriver.promise.all(all_refs_found).then(function(all_found) {
+        let el_text_promises = all_found.map((el) => {
+          return el.getText().then((text) => {
+            return { el: el, text: text}
+          })
+        });
+        webdriver.promise.all(el_text_promises).then((el_texts) => {
+          console.log("el_texts length: " + el_texts.length)
+          el_texts.forEach((el_text) => {
+            console.log('search, isPending(): ' + search.isPending() + ', checking: ' + el_text.text)
+            if (el_text.text.startsWith(name)) {
+              search.fulfill(el_text.el)
+            }
+          })
+          if (search.isPending()) {
+            search.cancel()
+          }
+        });
+      });
+    })
+    return new this.child_type(search.promise);
   }
 }
 
@@ -181,16 +199,27 @@ class Page {
   }
 }
 
+function check(object, name) {
+  console.log(name + ' raw: '    + object)
+  console.log(name + ': '    + Object.prototype.toString(object))
+  console.log(name + ' length: '    + object.length)
+  console.log(name + ' then: '    + object.then)
+  console.log(name + ' findElement: '    + object.findElement)
+  console.log(name + ' is promise: '    + webdriver.promise.isPromise(object))
+}
+
 class Browser {
   constructor() {
     this.base_uri = 'http://localhost:1234'
-    this.driver = new ChromeDriver();
+    this.driver = new webdriver.Builder()
+        .withCapabilities(webdriver.Capabilities.chrome())
+        .build();
   }
   start() {
     return this.driver.getWindowHandle()
   }
   find(locator) {
-    return new Node(this.driver.findElement(wd.By.cssSelector(locator)))
+    return new Node(this.driver.findElement({css: locator}))
   }
   open(path) {
     this.driver.get(this.base_uri + path)
