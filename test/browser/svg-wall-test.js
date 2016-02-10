@@ -56,21 +56,25 @@ describe('svg wall', function() {
     })
   })
 
+  let start = capturer()
+
   it('allows card to be dragged', (done) => {
     var card = page.wall().card_named('updated new');
-    card.location.then((start) => {
-      card.drag({x:50, y:20}).location.then((new_location) => {
-        expect(new_location.x).to.equal(start.x + 50)
-      }).then(done)
+    card.location.then(start.capture())
+    card.drag({x:50, y:20})
+    card.location.then((finish) => {
+      expect(finish.x).to
+        .equal(start.value.x + 50)
+      done()
     })
-
   })
 
   it('card displays a menu', (done) => {
     var card = page.wall().card_named('updated new');
     card.click_menu().sub_menu('change colour').then((menu) => {
       menu.select('pink')
-      expect(card.colour).to.eventually.equal('rgba(255, 192, 203, 1)').notify(done)
+      expect(card.colour).to.eventually.equal('rgba(255, 192, 203, 1)')
+      done()
     })
   })
 
@@ -85,3 +89,18 @@ function check(object, name) {
   console.log(name + ' findElement: '    + object.findElement)
   console.log(name + ' is promise: '    + webdriver.promise.isPromise(object))
 }
+
+function capturer() {
+  let captured
+  return {
+    capture: function() {
+      return (value) => {
+        captured = value
+      }
+    },
+    get value() {
+      return captured
+    }
+  }
+}
+
