@@ -50,15 +50,5 @@ class Node {
   _selfie() {
     return () => { return this }
   }
-
-  _menu_finder(context, sublocator) {
-    let locator = 'g.options_menu'
-    if (sublocator) {
-      locator += ' ' + sublocator
-    }
-    return () => {
-      return context.findElement({css: locator})
-    }
-  }
 }
 module.exports = Node

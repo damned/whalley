@@ -10,8 +10,10 @@ class Card extends Node {
 
   click_menu() {
     return new Menu(this.element.then((el) => {
-      return this._click_menu_actions(el).perform().then(this._menu_finder(el.getDriver()))
-    }));
+      return this._click_menu_actions(el).perform().then((() => {
+        return el.getDriver()
+      }))
+    }), this);
   }
 
   drag() {
@@ -26,6 +28,15 @@ class Card extends Node {
       return actions.click(el).click().sendKeys.call(actions, text_to_add.split('')).perform()
     }).then(this._selfie())
   }
+
+  get colour() {
+    return this.element.then((el) => {
+      return el.findElement({css: 'div'})
+    }).then((div) => {
+      return div.getCssValue('background-color')
+    })
+  }
+
 
   // "private"
 

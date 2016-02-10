@@ -25,7 +25,7 @@ describe('svg wall', function() {
   })
 
   after(() => {
-    //return browser.quit()
+    return browser.quit()
   })
 
   it('displays a new empty wall', (done) => {
@@ -47,12 +47,20 @@ describe('svg wall', function() {
     })
   })
 
+  it('card menu can be cancelled', (done) => {
+    var card = page.wall().card_named('updated new');
+    card.click_menu().sub_menu('change colour').then((menu) => {
+      expect(menu.has_gone).to.eventually.equal(false)
+      menu.select('cancel')
+      expect(menu.has_gone).to.eventually.equal(true).notify(done)
+    })
+  })
+
   it('card displays a menu', (done) => {
     var card = page.wall().card_named('updated new');
-    card.click_menu().click_first().then((menu) => {
-      expect(menu.has_gone).to.eventually.equal(false)
-      menu.click_cancel()
-      expect(menu.has_gone).to.eventually.equal(true).notify(done)
+    card.click_menu().sub_menu('change colour').then((menu) => {
+      menu.select('pink')
+      expect(card.colour).to.eventually.equal('rgba(255, 192, 203, 1)').notify(done)
     })
   })
 

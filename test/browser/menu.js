@@ -1,20 +1,23 @@
 'use strict';
 var webdriver = require('selenium-webdriver')
-var until = webdriver.until
-var Node = require('./node')
+function check(object, name) {
+  console.log(name + ' raw: '    + object)
+  console.log(name + ': '    + Object.prototype.toString(object))
+  console.log(name + ' length: '    + object.length)
+  console.log(name + ' then: '    + object.then)
+  console.log(name + ' findElement: '    + object.findElement)
+  console.log(name + ' is promise: '    + webdriver.promise.isPromise(object))
+}
 
-class Menu extends Node {
-  constructor(element, parent) {
-    super(element)
+class Menu {
+  constructor(driver, parent) {
+    this.driver = driver
     this.parent = parent
-    element.then((el) => {
-      this.driver = el.getDriver()
-    })
   }
 
-  click_first() {
-    console.log('1')
-    return this.element.then((el) => {
+  sub_menu(label) {
+    let selector = '.' + label.replace(/\s/, '-')
+    return this._menu_finder(selector).then((el) => {
       console.log('2')
       return new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({
         x: 2,
@@ -26,9 +29,10 @@ class Menu extends Node {
     })
   }
 
-  click_cancel() {
+  select(label) {
     let parent = this.parent;
-    return this._menu_finder(this.driver, '.cancel')().then((el) => {
+    let selector = '.' + label.replace(/\s/, '-')
+    return this._menu_finder(selector).then((el) => {
       return this._height_getter(el).then((height) => {
         return el.getSize().then((size) => {
           return el.getLocation().then((location) => {
@@ -48,7 +52,7 @@ class Menu extends Node {
   }
 
   get has_gone() {
-    return this._menu_finder(this.driver)().then((el) => {
+    return this._menu_finder().then((el) => {
       return false
     }).thenCatch((err) => {
       if (err.toString().startsWith('NoSuchElement')) {
@@ -56,6 +60,28 @@ class Menu extends Node {
       }
       throw err;
     })
+  }
+
+  _menu_finder(sublocator) {
+    let locator = 'g.options_menu'
+    if (sublocator) {
+      locator += ' ' + sublocator
+    }
+    return this.driver.then((driver) => {
+      return driver.findElement({css: locator})
+    })
+  }
+
+  get _height_getter() {
+    return (el) => {
+      return el.getSize().then((size) => {
+        return size.height;
+      })
+    }
+  }
+
+  _actions(el) {
+    return new webdriver.ActionSequence(el.getDriver());
   }
 }
 
