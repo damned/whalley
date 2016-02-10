@@ -59,11 +59,9 @@ describe('svg wall', function() {
   it('allows card to be dragged', (done) => {
     var card = page.wall().card_named('updated new');
     card.location.then((start) => {
-      card.drag({x:50, y:20}).then((card) => {
-        card.location.then((new_location) => {
-          expect(new_location.x).to.equal(start.x + 50)
-        }).then(done)
-      })
+      card.drag({x:50, y:20}).location.then((new_location) => {
+        expect(new_location.x).to.equal(start.x + 50)
+      }).then(done)
     })
 
   })

@@ -17,9 +17,10 @@ class Card extends Node {
   }
 
   drag(offset) {
-    return this.element.then((el) => {
+    this.element.then((el) => {
       return this._actions(el).dragAndDrop(el, offset).perform()
-    }).then(this._selfie())
+    })
+    return this
   }
 
   edit(text_to_add) {
