@@ -56,17 +56,24 @@ describe('svg wall', function() {
     })
   })
 
+  it('allows card to be dragged', (done) => {
+    var card = page.wall().card_named('updated new');
+    card.location.then((start) => {
+      card.drag({x:50, y:20}).then((card) => {
+        card.location.then((new_location) => {
+          expect(new_location.x).to.equal(start.x + 50)
+        }).then(done)
+      })
+    })
+
+  })
+
   it('card displays a menu', (done) => {
     var card = page.wall().card_named('updated new');
     card.click_menu().sub_menu('change colour').then((menu) => {
       menu.select('pink')
       expect(card.colour).to.eventually.equal('rgba(255, 192, 203, 1)').notify(done)
     })
-  })
-
-  it('allows card to be dragged', (done) => {
-    var card = page.wall().card_named('updated new');
-    expect(card.drag()).to.eventually.notify(done)
   })
 
 })

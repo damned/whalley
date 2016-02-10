@@ -16,9 +16,9 @@ class Card extends Node {
     }), this);
   }
 
-  drag() {
+  drag(offset) {
     return this.element.then((el) => {
-      return this._actions(el).dragAndDrop(el, {x: 100, y: 20 }).perform()
+      return this._actions(el).dragAndDrop(el, offset).perform()
     }).then(this._selfie())
   }
 
@@ -34,6 +34,12 @@ class Card extends Node {
       return el.findElement({css: 'div'})
     }).then((div) => {
       return div.getCssValue('background-color')
+    })
+  }
+
+  get location() {
+    return this.element.then((el) => {
+      return el.getLocation()
     })
   }
 
