@@ -25,7 +25,7 @@ describe('svg wall', function() {
   })
 
   after(() => {
-    return browser.quit()
+    //return browser.quit()
   })
 
   it('displays a new empty wall', (done) => {
@@ -50,7 +50,9 @@ describe('svg wall', function() {
   it('card displays a menu', (done) => {
     var card = page.wall().card_named('updated new');
     card.click_menu().click_first().then((menu) => {
-      expect(menu.click_cancel()).to.eventually.notify(done)
+      expect(menu.has_gone).to.eventually.equal(false)
+      menu.click_cancel()
+      expect(menu.has_gone).to.eventually.equal(true).notify(done)
     })
   })
 

@@ -51,9 +51,13 @@ class Node {
     return () => { return this }
   }
 
-  _menu_finder(context) {
+  _menu_finder(context, sublocator) {
+    let locator = 'g.options_menu'
+    if (sublocator) {
+      locator += ' ' + sublocator
+    }
     return () => {
-      return context.findElement({css: 'g.options_menu'})
+      return context.findElement({css: locator})
     }
   }
 }
