@@ -39,9 +39,17 @@ class Card extends Node {
   }
 
   get location() {
-    return this.element.then((el) => {
+    let captured
+    let location_promise = this.element.then((el) => {
       return el.getLocation()
+    }).then((location) => {
+      captured = location
+      return location
     })
+    location_promise.value = function() {
+      return captured
+    }
+    return location_promise
   }
 
 
