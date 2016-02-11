@@ -8,6 +8,20 @@ var Browser = require('./browser')
 
 var webdriver = require('selenium-webdriver')
 
+require('shelljs/global')
+
+var child = require('child_process')
+var app = child.spawn('nodejs', ['whalley-node-app.js', '--noauth'])
+app.on('error', (err) => {
+  console.log('Error running app process while testing: ' + err);
+});
+process.on('exit', function() {
+  echo('Exiting, attempting to kill app, pid: ' + app.pid)
+  app.stdin.end()
+  app.kill();
+  echo('Done')
+});
+
 describe('svg wall', function() {
   const wall_name = 'temp-test-wall';
   var browser, page
