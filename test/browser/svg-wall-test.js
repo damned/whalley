@@ -22,19 +22,34 @@ process.on('exit', function() {
   echo('Done')
 });
 
+class User {
+  add_card(page, text) {
+    return page.wall().shelf.drag_down().then((shelf) => {
+      var new_card = shelf.pull_out_card();
+      return new_card.edit(text)
+    })
+  }
+}
+
 describe('svg wall', function() {
   const wall_name = 'temp-test-wall';
-  var browser, page
+  var browser, page, captured
+  var user
+
   this.timeout(3000)
 
   before(() => {
     browser = new Browser()
-
+    user = new User()
     return browser.start()
   })
 
   before(() => {
     page = browser.open_wall(wall_name)
+  })
+
+  beforeEach(() => {
+    captured = capturer()
   })
 
   after(() => {
@@ -61,23 +76,21 @@ describe('svg wall', function() {
   })
 
   it('card menu can be cancelled', (done) => {
-    var card = page.wall().card_named('updated new');
-    card.click_menu().sub_menu('change colour').then((menu) => {
+    user.add_card(page, 'to cancel').then((card) => {
+      return card.click_menu().sub_menu('change colour')
+    }).then((menu) => {
       expect(menu.has_gone).to.eventually.equal(false)
       menu.select('cancel')
       expect(menu.has_gone).to.eventually.equal(true).notify(done)
     })
   })
 
-  let start = capturer()
-
   it('allows card to be dragged', (done) => {
     var card = page.wall().card_named('updated new');
-    card.location.then(start.capture())
+    card.location.then(capture('start'))
     card.drag({x:50, y:20})
     card.location.then((finish) => {
-      expect(finish.x).to
-        .equal(start.value.x + 50)
+      expect(finish.x).to.equal(captured.start.x + 50)
       done()
     })
   })
@@ -90,6 +103,10 @@ describe('svg wall', function() {
       done()
     })
   })
+
+  function capture(name) {
+    return captured.capture(name)
+  }
 
 })
 
@@ -104,16 +121,15 @@ function check(object, name) {
 }
 
 function capturer() {
-  let captured
-  return {
-    capture: function() {
+  var captured = {
+    capture: function(name) {
+      if (name === 'capture') throw('cannot capture "capture" - conflicts with capture method')
       return (value) => {
-        captured = value
+        captured[name] = value
+        return value
       }
-    },
-    get value() {
-      return captured
     }
   }
+  return captured
 }
 
