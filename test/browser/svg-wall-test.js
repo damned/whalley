@@ -9,7 +9,6 @@ var Browser = require('./browser')
 var webdriver = require('selenium-webdriver')
 
 describe('svg wall', function() {
-  //const wall_name = 'render-test';
   const wall_name = 'temp-test-wall';
   var browser, page
   this.timeout(3000)

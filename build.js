@@ -14,7 +14,7 @@ var to_stdout = function(after) {
   }
 }
 
-var app = child.spawn('nodejs', ['whalley-node-app.js'])
+var app = child.spawn('nodejs', ['whalley-node-app.js', '--noauth'])
 app.on('error', (err) => {
   console.log('Error running app process while testing: ' + err);
 });

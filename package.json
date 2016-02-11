@@ -22,6 +22,7 @@
     "http-auth": "*",
     "htpasswd": "*",
     "mkdirp": "*",
+    "minimist": "*",
     "rimraf": "*",
     "ssl-self-signed-certificate": "*"
   },
