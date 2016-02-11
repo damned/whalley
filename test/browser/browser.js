@@ -4,11 +4,22 @@ var Node = require('./node')
 var WallPage = require('./wall_page')
 
 class Browser {
-  constructor() {
-    this.base_uri = 'http://localhost:1234'
+  constructor(specified) {
+    let options = specified || { secure: false }
+    this.scheme = 'http';
+    this.port = 1234
+    if (options.secure) {
+      this.scheme = 'https'
+      this.port = 4321
+    }
+    this.base_uri = this.scheme + '://localhost:' + this.port
     this.driver = new webdriver.Builder()
         .withCapabilities(webdriver.Capabilities.chrome())
         .build();
+
+    this.driver.manage().window().setSize(700, 800);
+    let i = options.secure ? 0 : 1
+    this.driver.manage().window().setPosition(800 * i, 0);
   }
   start() {
     return this.driver.getWindowHandle()
@@ -16,7 +27,7 @@ class Browser {
   find(locator) {
     return new Node(this.driver.findElement({css: locator}))
   }
-  open_wall(name) {
+  open_wall(name, options) {
     let path = '/walls/' + name;
     this.driver.get(this.base_uri + path)
     return new WallPage(this)

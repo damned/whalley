@@ -21,11 +21,12 @@ class Shelf extends Node {
     })
   }
 
-  pull_out_card() {
+  pull_out_card(specified_location) {
+    let location = specified_location || {x: 0, y: 200}
     return new Card(this.element.then((el) => {
       return this._find_blank_in(el.getDriver()).then((blank_el) => {
         return this._actions(blank_el)
-          .dragAndDrop(blank_el, {x: 0, y: 200})
+          .dragAndDrop(blank_el, location)
           .click()
           .sendKeys('n', 'e', 'w')
           .perform()

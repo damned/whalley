@@ -25,15 +25,15 @@ process.on('exit', function() {
 class User {
   add_card(page, text) {
     return page.wall().shelf.drag_down().then((shelf) => {
-      var new_card = shelf.pull_out_card();
+      var new_card = shelf.pull_out_card({x:50, y: 300});
       return new_card.edit(text)
     })
   }
 }
 
 describe('svg wall', function() {
-  const wall_name = 'temp-test-wall';
-  var browser, page, captured
+  const wall_name = 'temp-test-wall' + Date.now();
+  var browser, secure_browser, page, secure_page, captured
   var user
 
   this.timeout(10000)
@@ -45,7 +45,13 @@ describe('svg wall', function() {
   })
 
   before(() => {
+    secure_browser = new Browser({secure: true})
+    return secure_browser.start()
+  })
+
+  before(() => {
     page = browser.open_wall(wall_name)
+    secure_page = secure_browser.open_wall(wall_name)
   })
 
   beforeEach(() => {
@@ -54,6 +60,10 @@ describe('svg wall', function() {
 
   after(() => {
     return browser.quit()
+  })
+
+  after(() => {
+    return secure_browser.quit()
   })
 
   it('displays a new empty wall', (done) => {
@@ -69,8 +79,9 @@ describe('svg wall', function() {
   })
 
   it('allows card to be edited', (done) => {
-    var card = page.wall().card_named('new');
-    card.edit('updated ').then((edited) => {
+    user.add_card(secure_page, 'new').then((card) => {
+      return card.edit('updated ')
+    }).then((edited) => {
       expect(edited.text).to.eventually.include('updated').notify(done)
     })
   })
