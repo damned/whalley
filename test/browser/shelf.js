@@ -12,7 +12,7 @@ class Shelf extends Node {
     return this.element.then((el) => {
       return this.height.then((height) => {
         return this._actions(el)
-          .mouseMove(el, {x: 2, y: height - 2 })
+          .mouseMove(el, {x: 5, y: height - 5 })
           .mouseDown()
           .mouseMove({x: 100, y: 400 })
           .mouseUp()

@@ -36,7 +36,7 @@ describe('svg wall', function() {
   var browser, page, captured
   var user
 
-  this.timeout(3000)
+  this.timeout(10000)
 
   before(() => {
     browser = new Browser()
@@ -86,11 +86,12 @@ describe('svg wall', function() {
   })
 
   it('allows card to be dragged', (done) => {
-    var card = page.wall().card_named('updated new');
-    card.location.then(capture('start'))
-    card.drag({x:50, y:20})
-    card.location.then((finish) => {
-      expect(finish.x).to.equal(captured.start.x + 50)
+    user.add_card(page, 'to drag').then((card) => {
+      card.location.then(capture('start'))
+      card.drag({x: 50, y: 20})
+      return card.location
+    }).then((location) => {
+      expect(location.x).to.equal(captured.start.x + 50)
       done()
     })
   })
