@@ -97,11 +97,12 @@ describe('svg wall', function() {
   })
 
   it('card displays a menu', (done) => {
-    var card = page.wall().card_named('updated new');
-    card.click_menu().sub_menu('change colour').then((menu) => {
-      menu.select('pink')
-      expect(card.colour).to.eventually.equal('rgba(255, 192, 203, 1)')
-      done()
+    user.add_card(page, 'to be pink').then((card) => {
+      card.click_menu().sub_menu('change colour').then((menu) => {
+        menu.select('pink')
+        expect(card.colour).to.eventually.equal('rgba(255, 192, 203, 1)')
+        done()
+      })
     })
   })
 
