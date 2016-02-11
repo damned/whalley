@@ -18,7 +18,7 @@ class Browser {
         .build();
 
     this.driver.manage().window().setSize(700, 800);
-    let i = options.secure ? 0 : 1
+    let i = options.secure ? 1 : 0
     this.driver.manage().window().setPosition(800 * i, 0);
   }
   start() {
