@@ -69,7 +69,7 @@ function text_summary(card) {
   if (card.text === undefined) return ''
 
   if (card.text.indexOf('data:image') === 0) {
-    return '(an image, ' + card.text.length + ' bytes)'
+    return '(an image, ' + card.text.length + ' bytes, id ' + card.id + ')'
   }
   return card.text.split(/\n/).join(' ')
 }
