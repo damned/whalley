@@ -66,18 +66,22 @@ function each_changed_wall_in_repo(handler) {
 
 var diff = require('deep-diff').diff
 function text_summary(card) {
+  if (card.text === undefined) return ''
+
   if (card.text.indexOf('data:image') === 0) {
     return '(an image, ' + card.text.length + ' bytes)'
   }
   return card.text.split(/\n/).join(' ')
 }
+
+const verbatim_field_exclusions = ['top', 'left', 'text', 'image_src']
 function card_change_summary(changes, before, after) {
   var summary = []
   if (changes.top !== undefined || changes.left !== undefined) {
     summary.push('moved from ' + before.left + ',' + before.top + ' to ' + after.left + ',' + after.top)
   }
   for (var changed_field in changes) {
-    if (changed_field !== 'top' && changed_field !== 'text' && changed_field !== 'left') {
+    if (verbatim_field_exclusions.indexOf(changed_field) == -1) {
       summary.push(changed_field + ' changed from ' + changes[changed_field].was + ' to ' + changes[changed_field].became)
     }
   }
