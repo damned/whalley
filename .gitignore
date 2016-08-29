@@ -7,3 +7,4 @@ whalley.crt
 whalley.htpasswd
 nohup.out
 builddir/
+*.txt~

@@ -4,3 +4,6 @@ just created a cards/ dir in another project to store the basic card ideas for t
 a convention of .cards or /cards in a project with issue-like info is interesting...  makes sense to track it within the source...
 
 we'd like to keep metadata about, e.g. relationships of major parts of project for diagram purposes, within project repo... 
+
+for capturing ideas, i reach for typing into notepad
+ - would be great if was that easy in whalley - what would that take?

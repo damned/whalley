@@ -1,2 +1,6 @@
  1 - replace upsync with operations messages (and downsync)
  2 - enforce in-wall changes with messages ensures will work remotely (and e.g. queueing out of box)
+
+organisation
+
+initial 25min pomodoro: understand state (5 min?), capture state, spike implementation
