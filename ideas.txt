@@ -7,3 +7,5 @@ we'd like to keep metadata about, e.g. relationships of major parts of project f
 
 for capturing ideas, i reach for typing into notepad
  - would be great if was that easy in whalley - what would that take?
+
+it seems i have multiple aspects of whalley now or what i'd like to do that are attractive to me: knowledge capture, open card data type, physical metaphor, nice js api, js-rest api duality, not doing too much, collaboration of smaller parts that don't do too much, quality ux
