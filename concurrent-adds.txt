@@ -15,8 +15,10 @@ initial 25min pomodoro:
  - spike implementation (requires more)
 
 second 25min:
- - spike impl - atomic adds?
+ - spike impl - atomic adds? actually did per-card change events
  - sketch out if reload wall has a place? what does it mean to keep it? if not, what does
    it mean to only load wall on initial and receive incremental update?  could do the
    reload in quiet time and provide trace of difference and how got there - captures
    weaknesses in incremental update?
+
+NB: seems to get extra card change event?  not sure about logical vs view update model - seem to have to trigger specific view update after (this could be single view refresh from logical a la "flux") - is this what i'm actually trying to solve?  what about where this data gets saved now that we're not doing the save wall - think we actually need to make server wall update json based on this message...  and have a plan!
