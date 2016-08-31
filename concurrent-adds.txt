@@ -21,4 +21,9 @@ second 25min:
    reload in quiet time and provide trace of difference and how got there - captures
    weaknesses in incremental update?
 
-NB: seems to get extra card change event?  not sure about logical vs view update model - seem to have to trigger specific view update after (this could be single view refresh from logical a la "flux") - is this what i'm actually trying to solve?  what about where this data gets saved now that we're not doing the save wall - think we actually need to make server wall update json based on this message...  and have a plan!
+NB: seems to get extra card change event?
+(btw: not sure about logical vs view update model - seem to have to trigger
+specific view update after (this could be single view refresh from logical a la "flux") )
+- is this what i'm actually trying to solve?  what about where this data gets saved now that
+  we're not doing the save wall - think we actually need to make server wall update json
+  based on this message...  and have a plan! - comparing to original plan diag

@@ -5,6 +5,7 @@ var chai = require('chai')
 var expect = chai.expect
 chai.use(require('chai-as-promised'))
 var Browser = require('./browser')
+var Store = require('../../lib/server/wall-stores.js').Store
 
 var webdriver = require('selenium-webdriver')
 
@@ -33,7 +34,7 @@ class User {
 
 describe('svg wall', function() {
   const wall_name = 'temp-test-wall';
-  var browser, page, captured
+  var browser, page, captured, store
   var user
 
   this.timeout(10000)
@@ -41,6 +42,7 @@ describe('svg wall', function() {
   before(() => {
     browser = new Browser()
     user = new User()
+    store = Store('.store/')
     return browser.start()
   })
 
@@ -72,6 +74,16 @@ describe('svg wall', function() {
     var card = page.wall().card_named('new');
     card.edit('updated ').then((edited) => {
       expect(edited.text).to.eventually.include('updated').notify(done)
+    })
+  })
+
+  xit('allows card to be edited, persisting to server - currently cannot check this in browser tests cos not using persistence -> simplify auth/persistence?', (done) => {
+    var card = page.wall().card_named('new');
+    card.edit('updatagain').then((edited) => {
+      expect(edited.text).to.eventually.include('updatagain').then(() => {
+        //expect(store.read_wall('edit-session', '0.2').cards).to.equal({})
+        done()
+      })
     })
   })
 
