@@ -24,7 +24,7 @@ describe('wall_stores.Store', function() {
 
   describe('write_wall,read_wall', function() {
     it('writes and reads wall at current version', function() {
-      var wall_json = JSON.stringify(wall);
+      var wall_json = JSON.stringify(wall, undefined, 2);
 
       store.write_wall('bob', wall_json)
       var stored_wall = store.read_wall('bob')
