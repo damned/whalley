@@ -10,26 +10,9 @@ var webdriver = require('selenium-webdriver')
 
 require('shelljs/global')
 
-var child = require('child_process')
-var app = child.spawn('nodejs', ['whalley-node-app.js', '--noauth'])
-app.on('error', (err) => {
-  console.log('Error running app process while testing: ' + err);
-});
-process.on('exit', function() {
-  echo('Exiting, attempting to kill app, pid: ' + app.pid)
-  app.stdin.end()
-  app.kill();
-  echo('Done')
-});
-
-class User {
-  add_card(page, text) {
-    return page.wall().shelf.drag_down().then((shelf) => {
-      var new_card = shelf.pull_out_card();
-      return new_card.edit(text)
-    })
-  }
-}
+require('./runner')
+var User = require('./user')
+var capturer = require('./capturer')
 
 describe('svg wall', function() {
   const wall_name = 'temp-test-wall';
@@ -120,18 +103,5 @@ function check(object, name) {
   console.log(name + ' then: '    + object.then)
   console.log(name + ' findElement: '    + object.findElement)
   console.log(name + ' is promise: '    + webdriver.promise.isPromise(object))
-}
-
-function capturer() {
-  var captured = {
-    capture: function(name) {
-      if (name === 'capture') throw('cannot capture "capture" - conflicts with capture method')
-      return (value) => {
-        captured[name] = value
-        return value
-      }
-    }
-  }
-  return captured
 }
 
