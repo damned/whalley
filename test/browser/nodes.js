@@ -16,7 +16,8 @@ class Nodes {
   _element_by_text(name) {
     return this._element_matching(
       (el) => { return el.getText() },
-      (t) => { return t.startsWith(name) }
+      (t) => { return t.startsWith(name) },
+      "looking for element with text starting with '" + name + "'"
     );
   }
 
@@ -30,12 +31,17 @@ class Nodes {
     }).then(promise.all);
   }
 
-  _element_matching(value_getter, value_matcher) {
+  _element_matching(value_getter, value_matcher, description) {
     return this._elements_and_values(value_getter).then((values) => {
-      //console.log('_element_matching - values: ', values)
-      return values.find((el_and_value) => {
+      var found = values.find((el_and_value) => {
         return value_matcher(el_and_value.value)
-      }).el
+      });
+      if (found == undefined) {
+        throw new Error('did not find: ' + description +
+          '\ngot values: ' + values.map((ev) => { return "'" + ev.value + "'" })
+        )
+      }
+      return found.el
     });
   }
 
