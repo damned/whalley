@@ -18,13 +18,11 @@ class Menu {
   sub_menu(label) {
     let selector = '.' + label.replace(/\s/, '-')
     return this._menu_finder(selector).then((el) => {
-      console.log('2')
       return new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({
         x: 2,
         y: -2
       }).click().perform()
     }).then(() => {
-      console.log('3')
       return this;
     })
   }
@@ -36,11 +34,8 @@ class Menu {
       return this._height_getter(el).then((height) => {
         return el.getSize().then((size) => {
           return el.getLocation().then((location) => {
-            console.log(JSON.stringify(size))
-            console.log(JSON.stringify(location))
             return this._actions(el)
               .mouseMove(el)
-              //.mouseMove({ x: 20, y: height-50 })
               .click()
               .perform()
           })

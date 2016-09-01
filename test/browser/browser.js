@@ -36,8 +36,6 @@ class Browser {
     return this.driver.getTitle()
   }
   quit() {
-    console.log("this is... " + this)
-    console.log("quitting... " + this.driver)
     return this.driver.quit()
   }
   wait_for(selector) {

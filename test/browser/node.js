@@ -25,7 +25,6 @@ class Node {
 
   get text() {
     return this.element.then((el) => {
-      console.log(el)
       return el.getText() })
   }
 

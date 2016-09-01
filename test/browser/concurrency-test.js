@@ -50,7 +50,6 @@ describe('wall concurrency', function() {
     store = Store('.store/')
     store.write_wall(wall_name, JSON.stringify(concurrency_test_wall), '0.2')
     return browser.start().then(function() {
-      console.log('trying to start second browser')
       return second_browser.start()
     })
   })
@@ -90,19 +89,6 @@ describe('wall concurrency', function() {
     })
   })
 
-
-  xit('xxxxxxxxxx allows card to be edited, persisting to server', (done) => {
-    var card = page.wall().card_named('new');
-    card.edit('updatagain').then((edited) => {
-      expect(edited.text).to.eventually.include('updatagain').then(() => {
-        var cards = store.read_wall(wall_name, '0.2');
-        expect(card_named(cards, 'new')).to.equal({})
-        //expect(store.read_wall('edit-session', '0.2').cards).to.equal({})
-        done()
-      })
-    })
-  })
-
   it('moves card on other browser', (done) => {
     var card = page.wall().card_named(card_to_drag.text)
     var start_x;
@@ -113,5 +99,46 @@ describe('wall concurrency', function() {
       expect(other_browser_card.location).to.eventually.include({ x: start_x + 40 }).notify(done)
     })
   })
+
+  it('allows card to be added and have its text set, persisting to server', (done) => {
+    var card_text = 'added card'
+    page.wall().shelf.drag_down().then((shelf) => {
+      var new_card = shelf.pull_out_card({ text: card_text});
+      expect(new_card.text).to.eventually.equal(card_text)
+      return second_page.wall().card_named(card_text)
+    }).then((edited_copy) => {
+      expect(edited_copy.text).to.eventually.equal(card_text).then(() => {
+        var wall = JSON.parse(store.read_wall(wall_name, '0.2'));
+        expect(card_named(wall.cards, card_text).text).to.equal(card_text)
+        done()
+      })
+    })
+  })
+
+  it('allows card to be edited, persisting to server', (done) => {
+    page.wall().shelf.drag_down().then((shelf) => {
+      var new_card = shelf.pull_out_card({ text: 'for editing'});
+      expect(new_card.text).to.eventually.equal('for editing')
+      new_card.edit('edited')
+      return second_page.wall().card_named('edited')
+    }).then((edited_copy) => {
+      expect(edited_copy.text).to.eventually.equal('edited').then(() => {
+        var wall = JSON.parse(store.read_wall(wall_name, '0.2'));
+        expect(card_named(wall.cards, 'edited').text).to.equal('edited')
+        done()
+      })
+    })
+  })
+
+  function card_named(cards, name) {
+    let found;
+    cards.forEach((card) => {
+      if (card.text == name) {
+        found = card
+        return
+      }
+    })
+    return found || '[not found]'
+  }
 })
 

@@ -21,7 +21,7 @@ class Wall {
   }
 
   card_named(name) {
-    console.log('finding card named', name)
+    //console.log('finding card named', name)
     return this.cards.find_by_text(name);
   }
 }

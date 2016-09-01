@@ -32,7 +32,7 @@ class Nodes {
 
   _element_matching(value_getter, value_matcher) {
     return this._elements_and_values(value_getter).then((values) => {
-      console.log('_element_matching')
+      //console.log('_element_matching - values: ', values)
       return values.find((el_and_value) => {
         return value_matcher(el_and_value.value)
       }).el
