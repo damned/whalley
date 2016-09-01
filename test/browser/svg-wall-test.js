@@ -33,21 +33,29 @@ class User {
 }
 
 describe('svg wall', function() {
-  const wall_name = 'temp-test-wall';
-  var browser, page, captured, store
-  var user
+  const wall_name = 'test-wall';
+  var browser, page, captured, store, user
+  var second_browser, second_page, second_user
+
+  var existing_cards = [ 'existing to drag' ]
 
   this.timeout(10000)
 
   before(() => {
     browser = new Browser()
     user = new User()
+    second_browser = new Browser({index: 1})
+    second_user = new User()
     store = Store('.store/')
-    return browser.start()
-  })
+    return browser.start().then(function() {
+      console.log('trying to start second browser')
+      second_browser.start()
+    })
+})
 
   before(() => {
     page = browser.open_wall(wall_name)
+    second_page = second_browser.open_wall(wall_name)
   })
 
   beforeEach(() => {
@@ -55,12 +63,15 @@ describe('svg wall', function() {
   })
 
   after(() => {
-    return browser.quit()
+    return browser.quit().then(function() {
+      second_browser.quit() // need to watch out for es6 classes and 'this' it seems :/
+                            // had problems doing ...then(second_browser.quit)
+    })
   })
 
-  it('displays a new empty wall', (done) => {
+  it('displays the test wall', (done) => {
     expect(page.title()).to.eventually.equal('Whalley SVG Card Wall')
-    expect(page.wall().cards.size).to.eventually.equal(0).notify(done)
+    expect(page.wall().cards.size).to.eventually.equal(existing_cards.length).notify(done)
   })
 
   it('allows card to be added', (done) => {
@@ -104,6 +115,19 @@ describe('svg wall', function() {
       return card.location
     }).then((location) => {
       expect(location.x).to.equal(captured.start.x + 50)
+      done()
+    })
+  })
+
+  it('moves card on other browser', (done) => {
+    var card = page.wall().card_named('existing to drag')
+    var start_x;
+    card.location.then((location) => {
+      start_x = location.x
+      card.drag({x: 40, y: 30})
+      return second_page.wall().card_named('existing to drag').location
+    }).then((other_location) => {
+      expect(other_location.x).to.equal(start_x + 40)
       done()
     })
   })

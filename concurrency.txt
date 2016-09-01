@@ -52,6 +52,7 @@ third - just push through:
      done consistently
  - need second browser to check sync up
    -> ** spike second browser tests
+     - got that going for insecure browsers showing drag
 
 
 mainline implementation notes:
