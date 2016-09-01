@@ -24,12 +24,31 @@ describe('wall concurrency', function() {
 
   this.timeout(10000)
 
+  var card_to_drag = {
+    x: 312,
+    y: 258,
+    width: 50,
+    height: 60,
+    type: "text",
+    colour: "lightgray",
+    id: "1472722094316",
+    color: "white",
+    text: "exists for dragging"
+  }
+  var concurrency_test_wall = {
+    structure_version: "0.2",
+    cards: [ card_to_drag ],
+    wall: {}
+  }
+
+
   before(() => {
     browser = new Browser({secure: true})
     user = new User()
     second_browser = new Browser({index: 1})
     second_user = new User()
     store = Store('.store/')
+    store.write_wall(wall_name, JSON.stringify(concurrency_test_wall), '0.2')
     return browser.start().then(function() {
       console.log('trying to start second browser')
       return second_browser.start()
@@ -62,9 +81,6 @@ describe('wall concurrency', function() {
 
   it('adds card to other browser', (done) => {
     page.wall().shelf.drag_down().then((shelf) => {
-
-      //var new_card_name =Math.random().toString(36).substring(2, 7)
-
       var new_card = shelf.pull_out_card();
       expect(new_card.text).to.eventually.equal('new')
       return second_page.wall().card_named('new').text
@@ -88,12 +104,12 @@ describe('wall concurrency', function() {
   })
 
   it('moves card on other browser', (done) => {
-    var card = page.wall().card_named('exists')
+    var card = page.wall().card_named(card_to_drag.text)
     var start_x;
     card.location.then((location) => {
       start_x = location.x
       card.drag({x: 40, y: 30})
-      var other_browser_card = second_page.wall().card_named('exists');
+      var other_browser_card = second_page.wall().card_named(card_to_drag.text);
       expect(other_browser_card.location).to.eventually.include({ x: start_x + 40 }).notify(done)
     })
   })

@@ -28,7 +28,7 @@ class Shelf extends Node {
         return this._actions(blank_el)
           .dragAndDrop(blank_el, location)
           .click()
-          .sendKeys('n', 'e', 'w')
+          .sendKeys('n', 'e', 'w', '\t')
           .perform()
       }).then(() => {
         return this.parent.card_named('new').element
