@@ -5,6 +5,9 @@ a convention of .cards or /cards in a project with issue-like info is interestin
 
 we'd like to keep metadata about, e.g. relationships of major parts of project for diagram purposes, within project repo... 
 
+we're starting to duplicate events for same thing (moving/position_changed) denoting whether
+event has originated from raiser - maybe this should be option on every event.
+
 for capturing ideas, i reach for typing into notepad
  - would be great if was that easy in whalley - what would that take?
 
