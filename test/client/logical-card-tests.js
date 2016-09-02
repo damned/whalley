@@ -220,14 +220,6 @@ describe('logical card', function() {
     })
   })
 
-  describe('card view interactions', function() {
-    describe('card view construction', function() {
-      it('constructs a text card by default', function() {
-        card = new whalley.LogicalCard({ id: 1, text: 'some text'}, wall)
-        expect(card_view_created).to.eq('text card view')
-      })
-    })
-  })
   function a_card(cardlike, extra_props) {
     return new whalley.LogicalCard(merge(cardlike, extra_props), wall)
   }
