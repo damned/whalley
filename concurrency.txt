@@ -28,37 +28,11 @@ specific view update after (this could be single view refresh from logical a la 
   we're not doing the save wall - think we actually need to make server wall update json
   based on this message...  and have a plan! - comparing to original plan diag
 
-third - just push through:
- - spike implementation
- - take notes on changes here
- - just make about concurrency not just adds
- - what are/should-be logical-card / -wall relations to their views?
-   -> ** best to assume OK and find specific improvements - if need fundamental change will become clear
- - i'm looking around design of how what relates to what and to be honest it's just a bit of a mess...
-   - sync client hooks up to visible wall so can't just have an invisible wall
-     -> ** check out what sync client links up to and see what we can invert
-       - sync client tied to global "visible_wall" :/
-       - load_wall and save_wall only tie to global visible_wall
-       - wall itself ties to (e.g. svg wall)
-         - on_card_moving/changed/add (wired through to logicals)
-         - move/add/update_card (wired through to logicals)
-       - ** in sum, looks like (for svg at least) can move to logical-first
-   - fabric wall has fabric 'cards' whereas svg wall uses logical 'cards'
-     -> maybe effort to move to logical first
-   - svg wall cards api etc is quite logical-first
-     -> ** make effort to move stuff from svg wall to logical wall ( ** ditch fabric for spike)
-   NB: is amazing how any slackness in design ends up in a right shambles - maybe why
-     "flux" is such a good idea, or how containment and view/obj separation works when
-     done consistently
- - need second browser to check sync up
-   -> ** spike second browser tests
-     - got that going for insecure browsers showing drag
-     - shown can use new Browser({secure: true}) and have persistent changes
-
-
 mainline implementation notes:
- - cover with func tests (simplify persistence and auth)
- - add in second browser
- - simplify logical card? - card view relation to just refresh from model (either move or rebuild? what about move speed?)
-   -> ** just go with what have, make specific improvements, if improvements cohere, go with that
- -
+ X cover with func tests (--noauth works well just attach to secure socket to check persistence)
+ X add in second browser for concurrency func tests (bit fiddly with async but seems to work pretty well)
+ X simplify logical card - card view relation (now logical card is independent of card view, but raises events that
+                                               view can/should act upon)
+ X make logical wall handle logical cards so can use in server
+ - instantiate logical wall in server and persist through that (even if just for save)
+ - let logical wall receive operation updates (e.g. card.change)
