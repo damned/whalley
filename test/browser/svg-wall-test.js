@@ -22,7 +22,7 @@ describe('svg wall', function() {
   this.timeout(10000)
 
   before(() => {
-    browser = new Browser()
+    browser = Browser()
     user = new User()
     return browser.start()
   })

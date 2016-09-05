@@ -4,45 +4,53 @@ var webdriver = require('selenium-webdriver')
 var Node = require('./node')
 var WallPage = require('./wall_page')
 
-class Browser {
-  constructor(specified) {
-    let options = _.assign({ secure: false, index: 0 }, specified)
-    this.scheme = 'http';
-    this.port = 1234
-    if (options.secure) {
-      this.scheme = 'https'
-      this.port = 4321
-    }
-    this.base_uri = this.scheme + '://localhost:' + this.port
-    this.driver = new webdriver.Builder()
-        .withCapabilities(webdriver.Capabilities.chrome())
-        .build();
+function Browser(specified) {
+  let options = _.assign({ secure: false, index: 0 }, specified)
+  var scheme = 'http';
+  var port = 1234
+  if (options.secure) {
+    scheme = 'https'
+    port = 4321
+  }
+  var base_uri = scheme + '://localhost:' + port
+  var driver = new webdriver.Builder()
+      .withCapabilities(webdriver.Capabilities.chrome())
+      .build();
 
-    this.driver.manage().window().setSize(700, 800);
-    this.driver.manage().window().setPosition(800 * options.index, 0);
+  driver.manage().window().setSize(700, 800);
+  driver.manage().window().setPosition(800 * options.index, 0);
+
+  function start() {
+    return driver.getWindowHandle()
   }
-  start() {
-    return this.driver.getWindowHandle()
+  function find(locator) {
+    return new Node(driver.findElement({css: locator}))
   }
-  find(locator) {
-    return new Node(this.driver.findElement({css: locator}))
-  }
-  open_wall(name, options) {
+  function open_wall(name, options) {
     let path = '/walls/' + name;
-    this.driver.get(this.base_uri + path)
-    return new WallPage(this)
+    driver.get(base_uri + path)
+    return new WallPage(external)
   }
-  title() {
-    return this.driver.getTitle()
+  function title() {
+    return driver.getTitle()
   }
-  quit() {
-    return this.driver.quit()
+  function quit() {
+    return driver.quit()
   }
-  wait_for(selector) {
-    return this.driver.wait(() => {
+  function wait_for(selector) {
+    return driver.wait(() => {
           return webdriver.until.elementLocated({css:selector});
-  }, 20000)
-}
+    }, 20000)
+  }
+  var external = {
+    start: start,
+    find: find,
+    open_wall: open_wall,
+    title: title,
+    quit: quit,
+    wait_for: wait_for
+  }
+  return external;
 }
 
 module.exports = Browser
