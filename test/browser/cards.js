@@ -2,16 +2,23 @@
 var Nodes = require('./nodes')
 var Card = require('./card')
 
-class Cards extends Nodes {
-  constructor(elements) {
-    super(elements)
-    this.child_type = Card
+function Cards(elements) {
+  var nodes = Nodes(elements, {child_type: Card})
+
+  var external = {
+    find_by_text: nodes.find_by_text,
+    get size() {
+      return size()
+    }
   }
-  get size() {
-    return this._elements_matching(
+
+  function size() {
+    return nodes.elements_matching(
       (el) => { return el.getAttribute('class') },
       (classes) => { return classes === 'card' }
     ).then((cards) => { return cards.length })
   }
+
+  return external
 }
 module.exports = Cards

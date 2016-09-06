@@ -20,7 +20,7 @@ function Node(element, overrides) {
     let options = extras || {}
     var type = options.as || Nodes;
     let elements = element.findElements({css: locator});
-    return new type(elements)
+    return type(elements)
   }
 
   function _height_getter() {

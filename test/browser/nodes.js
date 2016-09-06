@@ -2,27 +2,40 @@
 var Node = require('./node')
 var webdriver = require('selenium-webdriver')
 var promise = webdriver.promise;
+var _ = require('lodash')
 
-class Nodes {
-  constructor(elements_promise) {
-    this.elements = elements_promise
-    this.child_type = Node
+function Nodes(elements_promise, overrides) {
+  var options = _.assign({ child_type: Node }, overrides)
+  var elements = elements_promise
+  var child_type = options.child_type
+
+  var external = {
+    find_by_text: find_by_text,
+    elements_matching: elements_matching
   }
 
-  find_by_text(name) {
-    return new this.child_type(this._element_by_text(name));
+  function find_by_text(name) {
+    return child_type(_element_by_text(name));
   }
 
-  _element_by_text(name) {
-    return this._element_matching(
+  function elements_matching(value_getter, value_matcher) {
+    return _elements_and_values(value_getter).then((values) => {
+      return values.filter((el_and_value) => {
+        return value_matcher(el_and_value.value)
+      })
+    }).then((matching) => { return matching.map((el_and_value) => { return el_and_value.el }) });
+  }
+
+  function _element_by_text(name) {
+    return _element_matching(
       (el) => { return el.getText() },
       (t) => { return t.startsWith(name) },
       "looking for element with text starting with '" + name + "'"
     );
   }
 
-  _elements_and_values(getter) {
-    return this._resolved_elements().then(function (all_found) {
+  function _elements_and_values(getter) {
+    return _resolved_elements().then(function (all_found) {
       return all_found.map((el) => {
         return getter(el).then((value) => {
           return {el: el, value: value}
@@ -31,8 +44,8 @@ class Nodes {
     }).then(promise.all);
   }
 
-  _element_matching(value_getter, value_matcher, description) {
-    return this._elements_and_values(value_getter).then((values) => {
+  function _element_matching(value_getter, value_matcher, description) {
+    return _elements_and_values(value_getter).then((values) => {
       var found = values.find((el_and_value) => {
         return value_matcher(el_and_value.value)
       });
@@ -45,16 +58,10 @@ class Nodes {
     });
   }
 
-  _elements_matching(value_getter, value_matcher) {
-    return this._elements_and_values(value_getter).then((values) => {
-      return values.filter((el_and_value) => {
-        return value_matcher(el_and_value.value)
-      })
-    }).then((matching) => { return matching.map((el_and_value) => { return el_and_value.el }) });
+  function _resolved_elements() {
+    return elements.then(promise.all);
   }
 
-  _resolved_elements() {
-    return this.elements.then(promise.all);
-  }
+  return external
 }
 module.exports = Nodes
