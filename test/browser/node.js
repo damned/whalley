@@ -18,9 +18,9 @@ function Node(element, overrides) {
 
   function all(locator, extras) {
     let options = extras || {}
-    var type = options.as || Nodes;
-    let elements = element.findElements({css: locator});
-    return type(elements)
+    var collection_type = options.as || Nodes;
+    let elements_finder = () => { return element.findElements({css: locator}) };
+    return collection_type(elements_finder)
   }
 
   function _height_getter() {

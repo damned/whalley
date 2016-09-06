@@ -4,9 +4,8 @@ var webdriver = require('selenium-webdriver')
 var promise = webdriver.promise;
 var _ = require('lodash')
 
-function Nodes(elements_promise, overrides) {
+function Nodes(elements_finder, overrides) {
   var options = _.assign({ child_type: Node }, overrides)
-  var elements = elements_promise
   var child_type = options.child_type
 
   var external = {
@@ -59,7 +58,7 @@ function Nodes(elements_promise, overrides) {
   }
 
   function _resolved_elements() {
-    return elements.then(promise.all);
+    return elements_finder().then(promise.all);
   }
 
   return external

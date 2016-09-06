@@ -2,8 +2,8 @@
 var Nodes = require('./nodes')
 var Card = require('./card')
 
-function Cards(elements) {
-  var nodes = Nodes(elements, {child_type: Card})
+function Cards(elements_finder) {
+  var nodes = Nodes(elements_finder, {child_type: Card})
 
   var external = {
     find_by_text: nodes.find_by_text,

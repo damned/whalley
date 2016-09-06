@@ -4,21 +4,21 @@ var Shelf = require('./shelf')
 var Card = require('./card')
 
 function Wall(context_finder) {
-  function find_wall() {
+  function find_wall_node() {
     return context_finder().find('svg')
   }
 
   var external = {
     get card() {
-      return find_wall().find('g.card', {as: Card})
+      return find_wall_node().find('g.card', {as: Card})
     },
 
     get cards() {
-      return find_wall().all('g.card', {as: Cards})
+      return find_wall_node().all('g.card', {as: Cards})
     },
 
     get shelf() {
-      return find_wall().find('g#shelf', {as: Shelf, parent: this})
+      return find_wall_node().find('g#shelf', {as: Shelf, parent: this})
     },
 
     card_named: function(name) {
