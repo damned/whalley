@@ -23,7 +23,7 @@ describe('svg wall', function() {
 
   before(() => {
     browser = Browser()
-    user = new User()
+    user = User()
     return browser.start()
   })
 

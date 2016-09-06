@@ -44,9 +44,9 @@ describe('wall concurrency', function() {
 
   before(() => {
     browser = Browser({secure: true})
-    user = new User()
+    user = User()
     second_browser = Browser({index: 1})
-    second_user = new User()
+    second_user = User()
     store = Store('.store/')
     store.write_wall(wall_name, JSON.stringify(concurrency_test_wall), '0.2')
     return browser.start().then(function() {
