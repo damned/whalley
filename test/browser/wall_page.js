@@ -10,7 +10,7 @@ function WallPage(browser) {
       return browser.wait_for('.wall_status.ready')
     },
     wall: function() {
-      return Wall(browser.find('#wall'))
+      return Wall(() => { return browser.find('#wall') })
     }
   }
 }
