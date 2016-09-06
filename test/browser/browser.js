@@ -29,7 +29,7 @@ function Browser(specified) {
   function open_wall(name, options) {
     let path = '/walls/' + name;
     driver.get(base_uri + path)
-    return new WallPage(external)
+    return WallPage(external)
   }
   function title() {
     return driver.getTitle()
