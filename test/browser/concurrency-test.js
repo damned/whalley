@@ -66,10 +66,7 @@ describe('wall concurrency', function() {
   })
 
   after(() => {
-    return browser.quit().then(function() {
-      second_browser.quit() // need to watch out for es6 classes and 'this' it seems :/
-                            // had problems doing ...then(second_browser.quit)
-    })
+    return browser.quit().then(second_browser.quit)
   })
 
   it('displays walls', (done) => {
