@@ -3,23 +3,27 @@ var webdriver = require('selenium-webdriver')
 var Nodes = require('./nodes')
 var _ = require('lodash')
 
-function Node(element, overrides) {
-  //console.log("node element", element, 'overrides', overrides)
+function Node(element_finder, overrides) {
   var class_options = _.assign({ type: 'node'}, overrides)
   var type = class_options.type
+
+  function element() {
+    var element = element_finder();
+    return element
+  }
 
   function find(locator, extras) {
     let options = extras || {}
     var type = options.as || Node;
     var parent = options.parent;
-    var el = element.findElement({css: locator});
-    return type(el, parent)
+    var element_finder = () => { return element().findElement({css: locator}) };
+    return type(element_finder, parent)
   }
 
   function all(locator, extras) {
     let options = extras || {}
     var collection_type = options.as || Nodes;
-    let elements_finder = () => { return element.findElements({css: locator}) };
+    let elements_finder = () => { return element().findElements({css: locator}) };
     return collection_type(elements_finder)
   }
 
@@ -41,17 +45,14 @@ function Node(element, overrides) {
 
   var external = {
     get text() {
-      return element.then((el) => {
-        //console.log("text node element", element)
-        //console.log("text node element.id_", element.id_)
-        //console.log("text el", el)
+      return element().then((el) => {
         return el.getText()
       })
     },
     get height() {
-      return element.then(_height_getter())
+      return element().then(_height_getter())
     },
-    get element() { return element },
+    get element() { return element() },
     all: all,
     find: find,
     _height_getter: _height_getter,

@@ -53,9 +53,8 @@ describe('svg wall', function() {
 
   it('allows card to be edited', (done) => {
     var card = page.wall().card_named('new');
-    card.edit('updated ').then((edited) => {
-      expect(edited.text).to.eventually.include('updated').notify(done)
-    })
+    card.edit('updated')
+    expect(page.wall().card_named('updated').text).to.eventually.include('updated').notify(done)
   })
 
   it('card menu can be cancelled', (done) => {
@@ -69,11 +68,11 @@ describe('svg wall', function() {
   })
 
   it('allows card to be dragged', (done) => {
-    user.add_card(page, 'to drag').then((card) => {
-      card.location.then(capture('start'))
-      card.drag({x: 50, y: 20})
-      return card.location
-    }).then((location) => {
+    user.add_card(page, 'to drag')
+    var card = page.wall().card_named('to drag')
+    card.location.then(capture('start'))
+    card.drag({x: 50, y: 20})
+    card.location.then((location) => {
       expect(location.x).to.equal(captured.start.x + 50)
       done()
     })

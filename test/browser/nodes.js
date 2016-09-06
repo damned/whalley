@@ -14,7 +14,7 @@ function Nodes(elements_finder, overrides) {
   }
 
   function find_by_text(name) {
-    return child_type(_element_by_text(name));
+    return child_type(() => { return _element_by_text(name) });
   }
 
   function elements_matching(value_getter, value_matcher) {
@@ -38,9 +38,18 @@ function Nodes(elements_finder, overrides) {
       return all_found.map((el) => {
         return getter(el).then((value) => {
           return {el: el, value: value}
-        }).thenCatch((err) => { console.log("caught cha !!!!! " + err) })
+        })
       })
-    }).then(promise.all);
+    }).then(promise.all).thenCatch((err) => {
+      console.log("caught cha !!!!! doing basic retry...... " + err)
+      return _resolved_elements().then(function (all_found) {
+        return all_found.map((el) => {
+          return getter(el).then((value) => {
+            return {el: el, value: value}
+          })
+        })
+      }).then(promise.all)
+    });
   }
 
   function _element_matching(value_getter, value_matcher, description) {

@@ -4,8 +4,16 @@ var Card = require('./card')
 var keys = require('./keys')
 var _ = require('lodash')
 
-function Shelf(element, parent) {
-  var node = Node(element)
+function isAFunction(object) {
+  return typeof object == 'function';
+}
+
+function Shelf(element_finder, parent) {
+  var node = Node(element_finder)
+
+  function element() {
+    return element_finder() // TODO node.element() ?
+  }
 
   var external = {
     drag_down: drag_down,
@@ -13,9 +21,8 @@ function Shelf(element, parent) {
   };
 
   function drag_down() {
-    return element.then((el) => {
+    return element().then((el) => {
       return node.height.then((height) => {
-        console.log('height', height)
         return node._actions(el)
           .mouseMove(el, {x: 5, y: height - 5 })
           .mouseDown()
@@ -37,22 +44,22 @@ function Shelf(element, parent) {
     let location = {x: options.x, y: options.y}
     var new_text = options.text;
 
-    return new Card(element.then((el) => {
-      return _find_blank_in(el.getDriver()).then((blank_el) => {
-        //console.log("blank_el", blank_el)
-        var actions = node._actions(blank_el)
-        actions.dragAndDrop(blank_el, location)
+    function new_card_element_finder() {
+      return element().then((el) => {
+        return _find_blank_in(el.getDriver()).then((blank_el) => {
+          var actions = node._actions(blank_el)
+          actions.dragAndDrop(blank_el, location)
             .click()
             .sendKeys.call(actions, keys.to_enter(new_text))
             .perform()
-      }).then(() => {
-        var card = parent.card_named(new_text)
-        var card_element = card.element
-        //console.log("card", card)
-        //console.log("card_element", card_element)
-        return card_element
+        }).then(() => {
+          var card = parent.card_named(new_text)
+          return card.element()
+        })
       })
-    }))
+    }
+
+    return Card(new_card_element_finder)
   }
 
   function _find_blank_in(context) {

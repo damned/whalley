@@ -24,7 +24,7 @@ function Browser(specified) {
     return driver.getWindowHandle()
   }
   function find(locator) {
-    return new Node(driver.findElement({css: locator}))
+    return Node(() => { return driver.findElement({css: locator}) })
   }
   function open_wall(name, options) {
     let path = '/walls/' + name;
