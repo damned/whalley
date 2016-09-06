@@ -9,32 +9,35 @@ function check(object, name) {
   console.log(name + ' is promise: '    + webdriver.promise.isPromise(object))
 }
 
-class Menu {
-  constructor(driver, parent) {
-    this.driver = driver
-    this.parent = parent
+function Menu(driver, parent) {
+
+  var external = {
+    sub_menu: sub_menu,
+    select: select,
+    get has_gone() {
+      return has_gone()
+    }
   }
 
-  sub_menu(label) {
+  function sub_menu(label) {
     let selector = '.' + label.replace(/\s/, '-')
-    return this._menu_finder(selector).then((el) => {
+    return _menu_finder(selector).then((el) => {
       return new webdriver.ActionSequence(el.getDriver()).mouseMove(el).mouseMove({
         x: 2,
         y: -2
       }).click().perform()
     }).then(() => {
-      return this;
+      return external;
     })
   }
 
-  select(label) {
-    let parent = this.parent;
+  function select(label) {
     let selector = '.' + label.replace(/\s/, '-')
-    return this._menu_finder(selector).then((el) => {
-      return this._height_getter(el).then((height) => {
+    return _menu_finder(selector).then((el) => {
+      return _height_getter()(el).then((height) => {
         return el.getSize().then((size) => {
           return el.getLocation().then((location) => {
-            return this._actions(el)
+            return _actions(el)
               .mouseMove(el)
               .click()
               .perform()
@@ -46,8 +49,8 @@ class Menu {
     })
   }
 
-  get has_gone() {
-    return this._menu_finder().then((el) => {
+  function has_gone() {
+    return _menu_finder().then((el) => {
       return false
     }).thenCatch((err) => {
       if (err.toString().startsWith('NoSuchElement')) {
@@ -57,17 +60,17 @@ class Menu {
     })
   }
 
-  _menu_finder(sublocator) {
+  function _menu_finder(sublocator) {
     let locator = 'g.options_menu'
     if (sublocator) {
       locator += ' ' + sublocator
     }
-    return this.driver.then((driver) => {
-      return driver.findElement({css: locator})
+    return driver.then((d) => {
+      return d.findElement({css: locator})
     })
   }
 
-  get _height_getter() {
+  function _height_getter() {
     return (el) => {
       return el.getSize().then((size) => {
         return size.height;
@@ -75,9 +78,10 @@ class Menu {
     }
   }
 
-  _actions(el) {
+  function _actions(el) {
     return new webdriver.ActionSequence(el.getDriver());
   }
+  return external
 }
 
 module.exports = Menu

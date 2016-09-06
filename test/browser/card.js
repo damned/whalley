@@ -30,7 +30,7 @@ function Card(element) {
   }
 
   function click_menu() {
-    return new Menu(element.then((el) => {
+    return Menu(element.then((el) => {
       return _click_menu_actions(el).perform().then((() => {
         return el.getDriver()
       }))
