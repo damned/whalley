@@ -8,8 +8,7 @@ function Node(element_finder, overrides) {
   var type = class_options.type
 
   function element() {
-    var element = element_finder();
-    return element
+    return element_finder()
   }
 
   function find(locator, extras) {

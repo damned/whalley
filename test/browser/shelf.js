@@ -11,17 +11,13 @@ function isAFunction(object) {
 function Shelf(element_finder, parent) {
   var node = Node(element_finder)
 
-  function element() {
-    return element_finder() // TODO node.element() ?
-  }
-
   var external = {
     drag_down: drag_down,
     pull_out_card: pull_out_card
   };
 
   function drag_down() {
-    return element().then((el) => {
+    return node.element.then((el) => {
       return node.height.then((height) => {
         return node._actions(el)
           .mouseMove(el, {x: 5, y: height - 5 })
@@ -45,7 +41,7 @@ function Shelf(element_finder, parent) {
     var new_text = options.text;
 
     function new_card_element_finder() {
-      return element().then((el) => {
+      return node.element.then((el) => {
         return _find_blank_in(el.getDriver()).then((blank_el) => {
           var actions = node._actions(blank_el)
           actions.dragAndDrop(blank_el, location)
