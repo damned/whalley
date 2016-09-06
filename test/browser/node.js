@@ -1,53 +1,64 @@
 'use strict';
 var webdriver = require('selenium-webdriver')
 var Nodes = require('./nodes')
+var _ = require('lodash')
 
-class Node {
-  constructor(element) {
-    this.element = element
-    this.type = 'node'
-  }
+function Node(element, overrides) {
+  //console.log("node element", element, 'overrides', overrides)
+  var class_options = _.assign({ type: 'node'}, overrides)
+  var type = class_options.type
 
-  find(locator, extras) {
+  function find(locator, extras) {
     let options = extras || {}
     var type = options.as || Node;
     var parent = options.parent;
-    let element = this.element.findElement({css: locator});
-    return new type(element, parent)
+    var el = element.findElement({css: locator});
+    return type(el, parent)
   }
 
-  all(locator, extras) {
+  function all(locator, extras) {
     let options = extras || {}
     var type = options.as || Nodes;
-    let elements = this.element.findElements({css: locator});
+    let elements = element.findElements({css: locator});
     return new type(elements)
   }
 
-  get text() {
-    return this.element.then((el) => {
-      return el.getText() })
-  }
-
-  get height() {
-    return this.element.then(this._height_getter)
-  }
-
-  // "private"
-
-  get _height_getter() {
+  function _height_getter() {
     return (el) => {
       return el.getSize().then((size) => {
-        return size.height;
+            return size.height;
       })
     }
   }
 
-  _actions(el) {
+  function _actions(el) {
     return new webdriver.ActionSequence(el.getDriver());
   }
 
-  _selfie() {
-    return () => { return this }
+  function _selfie() {
+    return () => { return external }
   }
+
+  var external = {
+    get text() {
+      return element.then((el) => {
+        //console.log("text node element", element)
+        //console.log("text node element.id_", element.id_)
+        //console.log("text el", el)
+        return el.getText()
+      })
+    },
+    get height() {
+      return element.then(_height_getter())
+    },
+    get element() { return element },
+    all: all,
+    find: find,
+    _height_getter: _height_getter,
+    _actions: _actions,
+    _selfie: _selfie
+  }
+
+  return external
 }
 module.exports = Node

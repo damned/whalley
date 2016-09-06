@@ -80,6 +80,7 @@ describe('wall concurrency', function() {
 
   it('adds card to other browser', (done) => {
     page.wall().shelf.drag_down().then((shelf) => {
+      //console.log("shelf", shelf)
       var new_card = shelf.pull_out_card();
       expect(new_card.text).to.eventually.equal('new')
       return second_page.wall().card_named('new').text

@@ -4,26 +4,31 @@ var Card = require('./card')
 var keys = require('./keys')
 var _ = require('lodash')
 
-class Shelf extends Node {
-  constructor(element, parent) {
-    super(element)
-    this.parent = parent;
-  }
+function Shelf(element, parent) {
+  var node = Node(element)
 
-  drag_down() {
-    return this.element.then((el) => {
-      return this.height.then((height) => {
-        return this._actions(el)
+  var external = {
+    drag_down: drag_down,
+    pull_out_card: pull_out_card
+  };
+
+  function drag_down() {
+    return element.then((el) => {
+      return node.height.then((height) => {
+        console.log('height', height)
+        return node._actions(el)
           .mouseMove(el, {x: 5, y: height - 5 })
           .mouseDown()
           .mouseMove({x: 100, y: 400 })
           .mouseUp()
-          .perform().then(this._selfie())
+          .perform().then(function () {
+            return external
+          })
       })
     })
   }
 
-  pull_out_card(specified) {
+  function pull_out_card(specified) {
     let options = _.assign({
       x: 0, y: 200,
       text: 'new'
@@ -32,21 +37,28 @@ class Shelf extends Node {
     let location = {x: options.x, y: options.y}
     var new_text = options.text;
 
-    return new Card(this.element.then((el) => {
-      return this._find_blank_in(el.getDriver()).then((blank_el) => {
-        var actions = this._actions(blank_el)
+    return new Card(element.then((el) => {
+      return _find_blank_in(el.getDriver()).then((blank_el) => {
+        //console.log("blank_el", blank_el)
+        var actions = node._actions(blank_el)
         actions.dragAndDrop(blank_el, location)
             .click()
             .sendKeys.call(actions, keys.to_enter(new_text))
             .perform()
       }).then(() => {
-        return this.parent.card_named(new_text).element
+        var card = parent.card_named(new_text)
+        var card_element = card.element
+        //console.log("card", card)
+        //console.log("card_element", card_element)
+        return card_element
       })
     }))
   }
 
-  _find_blank_in(context) {
+  function _find_blank_in(context) {
     return context.findElement({css: 'g.blank'});
   }
+
+  return external
 }
 module.exports = Shelf
