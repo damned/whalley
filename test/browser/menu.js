@@ -1,13 +1,5 @@
 'use strict';
 var webdriver = require('selenium-webdriver')
-function check(object, name) {
-  console.log(name + ' raw: '    + object)
-  console.log(name + ': '    + Object.prototype.toString(object))
-  console.log(name + ' length: '    + object.length)
-  console.log(name + ' then: '    + object.then)
-  console.log(name + ' findElement: '    + object.findElement)
-  console.log(name + ' is promise: '    + webdriver.promise.isPromise(object))
-}
 
 function Menu(driver, parent) {
 
