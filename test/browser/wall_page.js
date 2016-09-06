@@ -15,7 +15,7 @@ class WallPage {
   }
 
   wall() {
-    return new Wall(this.browser.find('#wall'))
+    return Wall(this.browser.find('#wall'))
   }
 }
 module.exports = WallPage
