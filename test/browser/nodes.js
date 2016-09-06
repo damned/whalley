@@ -34,14 +34,7 @@ function Nodes(elements_finder, overrides) {
   }
 
   function _elements_and_values(getter) {
-    return _resolved_elements().then(function (all_found) {
-      return all_found.map((el) => {
-        return getter(el).then((value) => {
-          return {el: el, value: value}
-        })
-      })
-    }).then(promise.all).thenCatch((err) => {
-      console.log("caught cha !!!!! doing basic retry...... " + err)
+    function try_once() {
       return _resolved_elements().then(function (all_found) {
         return all_found.map((el) => {
           return getter(el).then((value) => {
@@ -49,6 +42,10 @@ function Nodes(elements_finder, overrides) {
           })
         })
       }).then(promise.all)
+    }
+    return try_once().thenCatch((err) => {
+      console.log("caught cha (probably stale reference exception?) !!!!! doing basic retry...... " + err)
+      return try_once()
     });
   }
 
